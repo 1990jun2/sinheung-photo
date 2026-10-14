@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>신흥1 현장사진</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f3a5f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="현장사진">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--ink:#1a202c;--sub:#5a6474;--line:#d9dee6;--bg:#f3f5f8;--card:#fff;--ok:#1e7d4f;--warn:#b7791f;--err:#c53030;--doc:#2b6cb0;--pho:#2f855a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif}
+button,input,select{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:var(--navy);color:#fff}
+header h1{font-size:17px;margin:0;flex:1;font-weight:700;letter-spacing:-.3px}
+header .who{font-size:13px;opacity:.85}
+header button{background:none;border:0;color:#fff;font-size:20px;padding:4px 6px;cursor:pointer}
+main{max-width:560px;margin:0 auto;padding:14px 16px calc(96px + env(safe-area-inset-bottom))}
+.view{display:none}.view.on{display:block}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:#e2e7ee;border-radius:12px;padding:4px;margin-bottom:12px}
+.seg button{border:0;background:none;padding:9px;border-radius:9px;font-weight:600;color:var(--sub);cursor:pointer}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fld{display:block}
+.fld span{display:block;font-size:13px;color:var(--sub);margin:0 0 4px 2px;font-weight:600}
+.fld input,.fld select{width:100%;height:52px;border:2px solid var(--line);border-radius:12px;padding:0 12px;font-size:20px;font-weight:700;background:#fff}
+.fld input:focus,.fld select:focus{outline:0;border-color:var(--navy2)}
+.fld input.bad{border-color:var(--err)}
+.preview{margin:10px 0 4px;padding:10px 12px;border-radius:10px;background:#fff;border:1px dashed var(--line);font-size:14px;color:var(--sub);min-height:44px}
+.preview b{color:var(--ink)}.preview .e{color:var(--err);font-weight:600}
+h3{font-size:14px;margin:18px 0 8px 2px;color:var(--sub);display:flex;align-items:center;gap:6px}
+h3 i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.grid{display:grid;gap:10px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.shot{border:0;border-radius:16px;min-height:88px;padding:10px 6px;color:#fff;font-weight:700;font-size:16px;line-height:1.25;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.shot small{font-size:11px;font-weight:500;opacity:.85}
+.shot.doc{background:var(--doc)}.shot.pho{background:var(--pho);min-height:104px;font-size:19px}
+.shot:active{transform:translateY(1px);filter:brightness(.92)}
+.shot:disabled{opacity:.45}
+.src{display:flex;gap:16px;justify-content:center;margin:14px 0 4px;font-size:14px;color:var(--sub)}
+.src label{display:flex;align-items:center;gap:5px}
+.btn{display:block;width:100%;height:50px;border-radius:12px;border:2px solid var(--navy);background:#fff;color:var(--navy);font-weight:700;margin-top:14px;cursor:pointer}
+.btn.primary{background:var(--navy);color:#fff}
+.btn.danger{border-color:var(--err);color:var(--err)}
+.btn.sm{height:42px;margin-top:8px;font-size:15px}
+.err{color:var(--err);font-weight:600;font-size:14px}
+.qbar{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line);display:none;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.qbar.on{display:flex}.qbar .dot{width:10px;height:10px;border-radius:50%;background:var(--warn)}
+.qbar.sending .dot{animation:pulse 1s infinite}.qbar.failed .dot{background:var(--err)}.qbar.offline .dot{background:#999}
+@keyframes pulse{50%{opacity:.25}}
+.qbar span{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;max-width:92%;background:rgba(26,32,44,.94);color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.toast.on{display:block}.toast.warn{background:#7b4a0e}.toast.bad{background:#8b1d1d}
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.bar .t{flex:1;font-weight:700;font-size:18px}
+.bar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font-size:14px}
+.chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--sub);margin-bottom:6px}
+.list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.card{background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--line);cursor:pointer;text-align:left;padding:0}
+.card .im{aspect-ratio:3/4;background:#e9edf2 center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:#9aa5b4;font-size:26px}
+.card .nm{font-size:11.5px;padding:5px 6px 2px;line-height:1.3;word-break:keep-all;font-weight:600}
+.card .mt{font-size:10.5px;color:var(--sub);padding:0 6px 6px}
+.card.over{border-color:var(--warn)}
+.empty{color:var(--sub);font-size:14px;padding:10px 2px}
+.modal{position:fixed;inset:0;z-index:15;background:rgba(10,15,25,.55);display:none;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.panel{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+.panel h2{font-size:17px;margin:0 0 10px}
+.panel .big{width:100%;max-height:50vh;object-fit:contain;background:#111;border-radius:10px;display:block}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.acts .btn{margin:0}
+.qitem{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.qitem img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:#ddd}
+.qitem .x{flex:1;min-width:0}.qitem .x div{word-break:keep-all}
+.qitem .st{font-size:12px;color:var(--sub)}.qitem .st.f{color:var(--err)}
+.qitem button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;font-size:13px;cursor:pointer}
+.ed{position:fixed;inset:0;z-index:30;background:#0d1117;display:none;flex-direction:column}
+.ed.on{display:flex}
+.ed .stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none;padding:12px}
+.ed canvas{touch-action:none;max-width:100%;max-height:100%}
+.ed .tools{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:#161b22}
+.ed .tools button{height:52px;border:0;border-radius:10px;background:#2d333b;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.ed .tools .save{background:#2f855a}
+.ed .hint{color:#aab;font-size:12px;text-align:center;padding:6px}
+.busy{position:fixed;inset:0;z-index:40;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;font-weight:700;color:var(--navy)}
+.busy.on{display:flex}
+.login p{color:var(--sub);font-size:14px}
+.ver{font-size:12px;color:var(--sub);text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>신흥1구역 현장사진</h1>
+  <span class="who" id="who"></span>
+  <button id="btnSet" aria-label="설정" hidden>⚙︎</button>
+</header>
+
+<main>
+  <!-- 접속 -->
+  <section id="vLogin" class="view login">
+    <h2>접속</h2>
+    <p>관리자에게 받은 접속코드를 입력하세요.</p>
+    <label class="fld" id="apiWrap"><span>서버 주소</span><input id="inApi" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" style="font-size:13px;font-weight:500"></label>
+    <label class="fld" style="margin-top:10px"><span>접속코드</span><input id="inCode" placeholder="예: A1B2-C3D4" autocapitalize="characters" autocomplete="off"></label>
+    <button class="btn primary" id="btnLogin">시작</button>
+    <p class="err" id="loginMsg"></p>
+  </section>
+
+  <!-- 촬영 -->
+  <section id="vMain" class="view">
+    <div class="seg" id="seg"><button data-g="토건" class="on">토지건물</button><button data-g="구분">구분건물</button></div>
+    <div class="row">
+      <label class="fld"><span>지번</span><input id="inJibun" placeholder="4902" autocomplete="off" enterkeyhint="next"></label>
+      <label class="fld"><span id="lblLoc">층 / 호</span><input id="inLoc" placeholder="2층" autocomplete="off" enterkeyhint="done"></label>
+    </div>
+    <div class="preview" id="preview"></div>
+
+    <h3><i style="background:var(--doc)"></i>서류 <small style="font-weight:400">→ 03. 서류</small></h3>
+    <div class="grid g3">
+      <button class="shot doc" data-kind="주민등록등본">주민등록<br>등본</button>
+      <button class="shot doc" data-kind="주민등록초본">주민등록<br>초본</button>
+      <button class="shot doc" data-kind="임대차계약서">임대차<br>계약서</button>
+    </div>
+    <h3><i style="background:var(--pho)"></i>현장사진 <small style="font-weight:400">→ 02. 사진</small></h3>
+    <div class="grid g2">
+      <button class="shot pho" data-kind="외관">외관<small>층 입력 없어도 됨</small></button>
+      <button class="shot pho" data-kind="내부">내부<small id="inHint">층 기록됨</small></button>
+    </div>
+    <div class="src">
+      <label><input type="radio" name="src" value="camera" checked> 카메라로 촬영</label>
+      <label><input type="radio" name="src" value="album"> 앨범에서 선택</label>
+    </div>
+    <button class="btn" id="btnFiles">이 지번 파일 보기 · 수정</button>
+  </section>
+
+  <!-- 파일 목록 -->
+  <section id="vFiles" class="view">
+    <div class="bar"><button id="btnBack">← 촬영</button><div class="t" id="filesTitle"></div><button id="btnReload">새로고침</button></div>
+    <label class="chk"><input type="checkbox" id="onlyLoc"> <span id="onlyLocTxt">이 층/호 서류만 보기</span></label>
+    <div id="fileBody"></div>
+  </section>
+</main>
+
+<div class="qbar" id="qbar"><i class="dot"></i><span id="qtxt"></span><b>›</b></div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="panel" id="panel"></div></div>
+<div class="ed" id="ed">
+  <div class="hint">모서리를 끌어 자르고, 가운데를 끌어 옮깁니다</div>
+  <div class="stage" id="stage"><canvas id="cv"></canvas></div>
+  <div class="tools">
+    <button id="edL">⟲ 왼쪽</button><button id="edR">⟳ 오른쪽</button><button id="edReset">원래대로</button>
+    <button id="edCancel">취소</button><button class="save" id="edSave">저장</button>
+  </div>
+</div>
+<div class="busy" id="busy">처리 중…</div>
+<input type="file" id="picker" accept="image/*" hidden>
+
+<script>
+'use strict';
+/* ===== 관리자 설정: Apps Script 웹앱 주소를 넣으면 근무자는 코드만 입력합니다 ===== */
+const API_URL = '';
+const VERSION = '1.0.0';
+const MAX_EDGE = 3200, JPEG_Q = 0.92;   // 고화질 저장 기준
+const DONG = '신흥동';
+const DOC_KINDS = ['주민등록등본', '주민등록초본', '임대차계약서'];
+
+/* ---------- 작은 도구 ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem('sh1.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('sh1.' + k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem('sh1.' + k); } catch (e) {} },
+};
+const S = { api: API_URL || LS.get('api', ''), code: LS.get('code', ''), name: LS.get('name', ''), gubun: LS.get('gubun', '토건') };
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+let toastTimer;
+function toast(msg, kind) {
+  const t = $('toast');
+  t.className = 'toast on' + (kind ? ' ' + kind : '');
+  t.innerHTML = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => (t.className = 'toast'), kind === 'bad' ? 6000 : 3200);
+}
+const busy = on => $('busy').classList.toggle('on', !!on);
+function show(v) { ['vLogin', 'vMain', 'vFiles'].forEach(x => $(x).classList.toggle('on', x === v)); window.scrollTo(0, 0); }
+
+/* ---------- 입력 정리 (서버 Code.gs와 같은 규칙) ---------- */
+function normJibun(s) {
+  const v = String(s || '').replace(/\s+/g, '').replace(/^신흥동?/, '').replace(/번지$/, '');
+  if (!/^\d{1,5}(-\d{1,4})?$/.test(v)) throw new Error('지번 형식 확인 (예: 4902, 4677-1)');
+  return v;
+}
+function normLoc(s, gubun) {
+  const v = String(s || '').replace(/\s+/g, '').toUpperCase();
+  if (!v) return '';
+  const pad = n => (n.length < 2 ? '0' + n : n);
+  let m;
+  if (gubun === '구분') {
+    if ((m = v.match(/^(?:B|비)(\d{1,2})호?$/))) return 'B' + pad(m[1]) + '호';
+    if ((m = v.match(/^(\d{2,4})호?$/))) return m[1] + '호';
+    throw new Error('호 형식 확인 (예: 101, 101호, B01호)');
+  }
+  if ((m = v.match(/^(\d{1,2})(?:층|F)?$/))) return Number(m[1]) + '층';
+  if ((m = v.match(/^(?:B|지하)(\d)(?:층|F)?$/))) return '지하' + m[1] + '층';
+  if (/^(?:지층|지하|지하층|B)$/.test(v)) return '지층';
+  if (v === '반지하') return '반지하';
+  if (/^옥탑/.test(v)) return /무허가/.test(v) ? '옥탑(무허가)' : '옥탑';
+  if ((m = v.match(/^비(\d{1,2})호?$/))) return '비' + pad(m[1]) + '호';
+  if ((m = v.match(/^(\d{3,4})호$/))) return m[1] + '호';
+  throw new Error('층/호 형식 확인 (예: 1층, 지층, 옥탑, 비01호, 201호)');
+}
+/** 현재 입력값으로 저장 대상 만들기. 문제가 있으면 오류 */
+function makeTarget(kind, src) {
+  src = src || { gubun: S.gubun, jibun: $('inJibun').value, loc: $('inLoc').value };
+  const gubun = src.gubun === '구분' ? '구분' : '토건';
+  const jibun = normJibun(src.jibun);
+  const loc = normLoc(src.loc, gubun);
+  const isDoc = DOC_KINDS.includes(kind);
+  if (!loc && gubun === '구분') throw new Error('구분건물은 호를 입력하세요');
+  if (!loc && isDoc) throw new Error('서류는 층 또는 호를 입력하세요');
+  const key = gubun === '구분' ? jibun + '_' + loc.replace(/호$/, '') : jibun;
+  return { gubun, jibun, loc, kind, isDoc, key };
+}
+function nameHint(t) {
+  return t.isDoc ? `${DONG} ${t.jibun} ${t.loc} ${t.kind}<b>N</b>.jpg` : `${t.key}-사-<b>N</b>.jpg${t.loc ? ' <small>(' + esc(t.loc) + ' ' + t.kind + ')</small>' : ' <small>(' + t.kind + ')</small>'}`;
+}
+
+/* ---------- 서버 통신 ---------- */
+class NetError extends Error {}
+class AuthError extends Error {}
+async function api(action, body, timeoutMs) {
+  if (!S.api) throw new AuthError('서버 주소가 없습니다');
+  const ctl = new AbortController();
+  const tm = setTimeout(() => ctl.abort(), timeoutMs || 90000);
+  let res;
+  try {
+    // 단순 요청(text/plain)으로 보내 CORS 사전요청을 피함
+    res = await fetch(S.api, { method: 'POST', body: JSON.stringify(Object.assign({ action, code: S.code }, body || {})), signal: ctl.signal, redirect: 'follow' });
+  } catch (e) {
+    throw new NetError('연결 안 됨');
+  } finally { clearTimeout(tm); }
+  if (!res.ok) throw new NetError('서버 응답 ' + res.status);
+  let j;
+  try { j = await res.json(); } catch (e) { throw new NetError('서버 응답을 읽지 못함'); }
+  if (j.auth === false) throw new AuthError(j.error || '접속코드 오류');
+  if (!j.ok) throw new Error(j.error || '서버 오류');
+  return j;
+}
+
+/* ---------- 이미지 ---------- */
+function loadImg(src) {
+  return new Promise((ok, bad) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => bad(new Error('사진을 읽지 못했습니다')); im.src = src; });
+}
+async function toJpeg(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const im = await loadImg(url);   // 최신 브라우저는 사진의 회전정보(EXIF)를 자동 반영
+    const s = Math.min(1, MAX_EDGE / Math.max(im.naturalWidth, im.naturalHeight));
+    const cv = document.createElement('canvas');
+    cv.width = Math.round(im.naturalWidth * s); cv.height = Math.round(im.naturalHeight * s);
+    cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+    return await new Promise(r => cv.toBlob(r, 'image/jpeg', JPEG_Q));
+  } finally { URL.revokeObjectURL(url); }
+}
+const blobToB64 = b => new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = bad; r.readAsDataURL(b); });
+const canvasToB64 = cv => new Promise(r => cv.toBlob(b => r(blobToB64(b)), 'image/jpeg', JPEG_Q));
+
+/* ---------- 오프라인 대기열 (폰 안에 보관) ---------- */
+const Q = {
+  db: null,
+  open() {
+    if (this.db) return Promise.resolve(this.db);
+    return new Promise((ok, bad) => {
+      const rq = indexedDB.open('sh1-queue', 1);
+      rq.onupgradeneeded = () => rq.result.createObjectStore('q', { keyPath: 'id' });
+      rq.onsuccess = () => ok((this.db = rq.result));
+      rq.onerror = () => bad(rq.error);
+    });
+  },
+  async tx(mode, fn) {
+    const db = await this.open();
+    return new Promise((ok, bad) => { const t = db.transaction('q', mode); const r = fn(t.objectStore('q')); t.oncomplete = () => ok(r && r.result); t.onerror = () => bad(t.error); });
+  },
+  put(x) { return this.tx('readwrite', s => s.put(x)); },
+  del(id) { return this.tx('readwrite', s => s.delete(id)); },
+  async all() { return ((await this.tx('readonly', s => s.getAll())) || []).sort((a, b) => a.at - b.at); },
+};
+let pumping = false, retryTimer = null;
+async function pump() {
+  if (pumping) return;
+  pumping = true;
+  try {
+    for (const it of await Q.all()) {
+      if (it.status === 'fail') continue;
+      updateBar('sending');
+      try {
+        const r = await api('upload', { gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind, cid: it.id, data: await blobToB64(it.blob) }, 120000);
+        await Q.del(it.id);
+        if (r.over) toast(`⚠ ${esc(r.name)} 저장됨<br>사진이 ${r.count}장 — 조서 칸(12장)을 넘었습니다`, 'warn');
+        else toast('✓ 저장됨: ' + esc(r.name));
+        if ($('vFiles').classList.contains('on')) loadFiles(true);
+      } catch (e) {
+        if (e instanceof NetError) break;          // 연결 문제: 그대로 두고 나중에 재시도
+        if (e instanceof AuthError) { logout(e.message); break; }
+        it.status = 'fail'; it.error = e.message; await Q.put(it);
+        toast('✗ 저장 실패: ' + esc(e.message), 'bad');
+      }
+    }
+  } finally {
+    pumping = false;
+    const left = (await Q.all()).filter(x => x.status !== 'fail').length;
+    clearTimeout(retryTimer);
+    if (left) retryTimer = setTimeout(pump, 20000);
+    updateBar();
+  }
+}
+async function updateBar(state) {
+  const all = await Q.all();
+  const wait = all.filter(x => x.status !== 'fail').length, fail = all.length - wait;
+  const bar = $('qbar');
+  bar.className = 'qbar' + (all.length ? ' on' : '');
+  if (!all.length) return;
+  const off = !navigator.onLine;
+  bar.classList.add(fail ? 'failed' : off ? 'offline' : (state === 'sending' || pumping) ? 'sending' : 'x');
+  $('qtxt').textContent = [wait ? `전송 대기 ${wait}건` + (off ? ' (인터넷 연결되면 자동 전송)' : pumping ? ' · 전송 중' : '') : '', fail ? `실패 ${fail}건` : ''].filter(Boolean).join(' · ');
+}
+window.addEventListener('online', () => { updateBar(); pump(); });
+window.addEventListener('offline', () => updateBar());
+document.addEventListener('visibilitychange', () => { if (!document.hidden) pump(); });
+
+async function openQueue() {
+  const all = await Q.all();
+  const urls = [];
+  $('panel').innerHTML = `<h2>전송 대기열 (${all.length}건)</h2>` + (all.length ? all.map(it => {
+    const u = URL.createObjectURL(it.blob); urls.push(u);
+    let nm; try { nm = nameHint(makeTarget(it.kind, it)).replace(/<[^>]+>/g, ''); } catch (e) { nm = it.jibun + ' ' + it.kind; }
+    return `<div class="qitem"><img src="${u}" alt=""><div class="x"><div>${esc(nm)}</div><div class="st ${it.status === 'fail' ? 'f' : ''}">${it.status === 'fail' ? '실패: ' + esc(it.error) : '대기 중'} · ${new Date(it.at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</div></div>
+      ${it.status === 'fail' ? `<button data-retry="${it.id}">재시도</button>` : ''}<button data-drop="${it.id}">버리기</button></div>`;
+  }).join('') : '<p class="empty">대기 중인 사진이 없습니다.</p>') + `<button class="btn primary sm" id="qNow">지금 전송</button><button class="btn sm" data-close>닫기</button>`;
+  openModal(() => urls.forEach(URL.revokeObjectURL));
+  $('qNow').onclick = () => { closeModal(); pump(); };
+  $('panel').querySelectorAll('[data-retry]').forEach(b => b.onclick = async () => {
+    const it = all.find(x => x.id === b.dataset.retry); it.status = 'wait'; it.error = ''; await Q.put(it); closeModal(); pump();
+  });
+  $('panel').querySelectorAll('[data-drop]').forEach(b => b.onclick = async () => {
+    if (!confirm('이 사진을 전송하지 않고 버릴까요? (폰에서만 삭제됩니다)')) return;
+    await Q.del(b.dataset.drop); closeModal(); updateBar(); openQueue();
+  });
+}
+$('qbar').onclick = openQueue;
+
+/* ---------- 모달 ---------- */
+let onModalClose = null;
+function openModal(cleanup) { onModalClose = cleanup || null; $('modal').classList.add('on'); }
+function closeModal() { $('modal').classList.remove('on'); if (onModalClose) { onModalClose(); onModalClose = null; } }
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal' || e.target.hasAttribute('data-close')) closeModal(); });
+
+/* ---------- 촬영 화면 ---------- */
+function setGubun(g) {
+  S.gubun = g; LS.set('gubun', g);
+  $('seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.g === g));
+  $('lblLoc').textContent = g === '구분' ? '호 (필수)' : '층 / 호';
+  $('inLoc').placeholder = g === '구분' ? '101' : '2층';
+  $('inHint').textContent = g === '구분' ? '호별 사진' : '층 기록됨';
+  $('onlyLocTxt').textContent = g === '구분' ? '이 호 서류만 보기' : '이 층/호 서류만 보기';
+  renderPreview();
+}
+$('seg').onclick = e => { const b = e.target.closest('button'); if (b) setGubun(b.dataset.g); };
+
+function renderPreview() {
+  LS.set('jibun', $('inJibun').value); LS.set('loc', $('inLoc').value);
+  const p = $('preview');
+  let jOk = true, lOk = true, jv = '', lv = '';
+  try { jv = normJibun($('inJibun').value); } catch (e) { jOk = !$('inJibun').value.trim() ? null : false; }
+  try { lv = normLoc($('inLoc').value, S.gubun); } catch (e) { lOk = false; }
+  $('inJibun').classList.toggle('bad', jOk === false);
+  $('inLoc').classList.toggle('bad', lOk === false);
+  if (jOk === null) { p.innerHTML = '지번을 입력하세요'; return; }
+  if (!jOk) { p.innerHTML = '<span class="e">지번 형식 확인 (예: 4902, 4677-1)</span>'; return; }
+  if (!lOk) { p.innerHTML = `<span class="e">${esc(S.gubun === '구분' ? '호 형식 확인 (예: 101, B01호)' : '층/호 형식 확인 (예: 1층, 지층, 옥탑, 비01호)')}</span>`; return; }
+  const key = S.gubun === '구분' ? (lv ? jv + '_' + lv.replace(/호$/, '') : '') : jv;
+  p.innerHTML = `<b>${DONG} ${esc(jv)}${lv ? ' ' + esc(lv) : ''}</b><br>` +
+    (lv ? `서류: ${DONG} ${esc(jv)} ${esc(lv)} 등본<b>N</b>.jpg<br>` : '서류: <span class="e">층/호를 넣어야 촬영 가능</span><br>') +
+    (key ? `사진: ${esc(key)}-사-<b>N</b>.jpg` : '사진: <span class="e">호를 넣어야 촬영 가능</span>');
+}
+$('inJibun').addEventListener('input', renderPreview);
+$('inLoc').addEventListener('input', renderPreview);
+$('inJibun').addEventListener('keydown', e => { if (e.key === 'Enter') $('inLoc').focus(); });
+$('inLoc').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+
+let pickCtx = null;
+function pick(ctx) {
+  pickCtx = ctx;
+  const p = $('picker');
+  p.value = '';
+  const album = document.querySelector('input[name=src]:checked').value === 'album';
+  if (album) p.removeAttribute('capture'); else p.setAttribute('capture', 'environment');
+  p.multiple = album && ctx.mode === 'new';
+  p.click();
+}
+document.querySelectorAll('.shot').forEach(b => b.onclick = () => {
+  let t;
+  try { t = makeTarget(b.dataset.kind); } catch (e) { toast('✗ ' + esc(e.message), 'bad'); return; }
+  pick({ mode: 'new', t });
+});
+$('picker').onchange = async () => {
+  const files = Array.from($('picker').files || []);
+  const ctx = pickCtx;
+  if (!files.length || !ctx) return;
+  if (ctx.mode === 'retake') return doRetake(ctx, files[0]);
+  busy(true);
+  try {
+    for (const f of files) {
+      const blob = await toJpeg(f);
+      await Q.put({ id: uid(), gubun: ctx.t.gubun, jibun: ctx.t.jibun, loc: ctx.t.loc, kind: ctx.t.kind, blob, at: Date.now(), status: 'wait' });
+    }
+    toast(`${files.length > 1 ? files.length + '장 ' : ''}${esc(ctx.t.kind)} 보관됨 · 전송 중…`);
+  } catch (e) { toast('✗ ' + esc(e.message), 'bad'); }
+  busy(false);
+  updateBar(); pump();
+};
+
+/* ---------- 파일 목록 / 수정 ---------- */
+let listData = null, listTarget = null;
+$('btnFiles').onclick = () => {
+  try { normJibun($('inJibun').value); } catch (e) { toast('✗ 지번을 먼저 입력하세요', 'bad'); return; }
+  show('vFiles'); loadFiles();
+};
+$('btnBack').onclick = () => show('vMain');
+$('btnReload').onclick = () => loadFiles();
+$('onlyLoc').onchange = () => { LS.set('onlyLoc', $('onlyLoc').checked); loadFiles(); };
+
+async function loadFiles(quiet) {
+  let jibun, loc;
+  try { jibun = normJibun($('inJibun').value); loc = normLoc($('inLoc').value, S.gubun); } catch (e) { toast('✗ ' + esc(e.message), 'bad'); return; }
+  if (S.gubun === '구분' && !loc) { toast('✗ 구분건물은 호를 입력하세요', 'bad'); show('vMain'); return; }
+  listTarget = { gubun: S.gubun, jibun, loc };
+  $('filesTitle').textContent = `${DONG} ${jibun}${loc ? ' ' + loc : ''}`;
+  if (!quiet) $('fileBody').innerHTML = '<p class="empty">불러오는 중…</p>';
+  try {
+    listData = await api('list', { gubun: S.gubun, jibun, loc, onlyLoc: $('onlyLoc').checked });
+    renderFiles();
+  } catch (e) {
+    if (e instanceof AuthError) return logout(e.message);
+    $('fileBody').innerHTML = `<p class="err">불러오기 실패: ${esc(e.message)}</p>`;
+  }
+}
+function cardHtml(f, i, over) {
+  const m = f.meta || {};
+  const when = m.at ? new Date(m.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '기존 파일';
+  const short = f.name.replace(/\.[^.]+$/, '').replace(DONG + ' ', '');
+  return `<button class="card${over ? ' over' : ''}" data-i="${i}"><div class="im" ${f.thumb ? `style="background-image:url('${f.thumb}')"` : ''}>${f.thumb ? '' : '🖼'}</div>
+    <div class="nm">${esc(short)}</div><div class="mt">${esc([m.by, m.kind === '내부' && m.loc ? m.loc : (m.kind === '외관' ? '외관' : ''), when].filter(Boolean).join(' · '))}${over ? ' · ⚠칸 초과' : ''}</div></button>`;
+}
+function renderFiles() {
+  const d = listData;
+  const all = d.docs.concat(d.photos);
+  d._all = all;
+  $('fileBody').innerHTML =
+    `<h3><i style="background:var(--doc)"></i>서류 ${d.docs.length}건 <small style="font-weight:400">${esc(d.folder ? '03. 서류 / ' + d.folder : '폴더 아직 없음')}</small></h3>` +
+    (d.docs.length ? `<div class="list">${d.docs.map((f, i) => cardHtml(f, i)).join('')}</div>` : '<p class="empty">없음</p>') +
+    `<h3><i style="background:var(--pho)"></i>현장사진 ${d.photos.length} / ${d.slots}장 <small style="font-weight:400">02. 사진 / ${esc(d.key)}-사-N</small></h3>` +
+    (d.photos.length ? `<div class="list">${d.photos.map((f, i) => cardHtml(f, d.docs.length + i, i >= d.slots)).join('')}</div>` : '<p class="empty">없음</p>');
+  $('fileBody').querySelectorAll('.card').forEach(c => c.onclick = () => openDetail(all[+c.dataset.i]));
+}
+
+async function openDetail(f) {
+  const isDoc = !/-사-\d+\./.test(f.name);
+  $('panel').innerHTML = `<h2>${esc(f.name)}</h2><img class="big" id="dImg" alt="" ${f.thumb ? `src="${f.thumb}"` : ''}>
+    <p class="empty" id="dMsg">원본 불러오는 중…</p>
+    <div class="acts">
+      <button class="btn" id="dEdit" disabled>회전 · 자르기</button>
+      <button class="btn" id="dRetake">다시 찍기</button>
+      <button class="btn" id="dMove">정보 수정</button>
+      <button class="btn danger" id="dDel">삭제</button>
+    </div><button class="btn sm" data-close>닫기</button>`;
+  openModal();
+  $('dRetake').onclick = () => { closeModal(); pick({ mode: 'retake', f }); };
+  $('dMove').onclick = () => openMove(f, isDoc);
+  $('dDel').onclick = () => doDelete(f);
+  try {
+    const r = await api('get', { id: f.id }, 120000);
+    const url = `data:${r.mime || 'image/jpeg'};base64,${r.data}`;
+    if (!$('dImg')) return;
+    $('dImg').src = url; $('dMsg').textContent = '';
+    $('dEdit').disabled = false;
+    $('dEdit').onclick = () => { closeModal(); openEditor(f, url); };
+  } catch (e) { if ($('dMsg')) $('dMsg').textContent = '원본을 불러오지 못했습니다: ' + e.message; }
+}
+
+async function doDelete(f) {
+  if (!confirm(`${f.name}\n\n삭제할까요? 드라이브 휴지통으로 이동하고, 뒤 번호가 하나씩 당겨집니다.`)) return;
+  closeModal(); busy(true);
+  try { const r = await api('remove', { id: f.id }); toast(`삭제됨${r.renamed ? ` · ${r.renamed}개 번호 당김` : ''}`); await loadFiles(true); }
+  catch (e) { toast('✗ 삭제 실패: ' + esc(e.message), 'bad'); }
+  busy(false);
+}
+
+async function doRetake(ctx, file) {
+  busy(true);
+  try {
+    const blob = await toJpeg(file);
+    const r = await api('replace', { id: ctx.f.id, data: await blobToB64(blob) }, 120000);
+    toast('✓ 다시 찍기 완료: ' + esc(r.name));
+    await loadFiles(true);
+  } catch (e) { toast('✗ 다시 찍기 실패: ' + esc(e.message) + (e instanceof NetError ? ' (인터넷 연결 필요)' : ''), 'bad'); }
+  busy(false);
+}
+
+function openMove(f, isDoc) {
+  const m = f.meta || {};
+  let cur = { gubun: m.gubun || listTarget.gubun, jibun: m.jibun || listTarget.jibun, loc: m.loc || '', kind: m.kind || '' };
+  const dm = f.name.match(/^\S+ (\S+) (\S+) (주민등록등본|주민등록초본|임대차계약서)\d+\./);
+  if (dm) cur = Object.assign(cur, { jibun: dm[1], loc: dm[2], kind: dm[3] });
+  if (!cur.kind) cur.kind = isDoc ? '주민등록등본' : '외관';
+  const kinds = ['주민등록등본', '주민등록초본', '임대차계약서', '외관', '내부'];
+  $('panel').innerHTML = `<h2>정보 수정</h2><p class="empty" style="padding-top:0">${esc(f.name)}</p>
+    <div class="row"><label class="fld"><span>건물</span><select id="mG"><option value="토건">토지건물</option><option value="구분">구분건물</option></select></label>
+    <label class="fld"><span>종류</span><select id="mK">${kinds.map(k => `<option>${k}</option>`).join('')}</select></label></div>
+    <div class="row" style="margin-top:10px"><label class="fld"><span>지번</span><input id="mJ"></label><label class="fld"><span>층 / 호</span><input id="mL"></label></div>
+    <div class="preview" id="mP"></div>
+    <button class="btn primary" id="mSave">변경 저장</button><button class="btn sm" data-close>취소</button>`;
+  $('mG').value = cur.gubun; $('mK').value = cur.kind; $('mJ').value = cur.jibun; $('mL').value = cur.loc;
+  const val = () => { const src = { gubun: $('mG').value, jibun: $('mJ').value, loc: $('mL').value }; return makeTarget($('mK').value, src); };
+  const pv = () => { try { $('mP').innerHTML = '새 이름: ' + nameHint(val()); } catch (e) { $('mP').innerHTML = `<span class="e">${esc(e.message)}</span>`; } };
+  ['mG', 'mK', 'mJ', 'mL'].forEach(id => $(id).addEventListener('input', pv)); pv();
+  $('mSave').onclick = async () => {
+    let t; try { t = val(); } catch (e) { return; }
+    closeModal(); busy(true);
+    try { const r = await api('move', { id: f.id, to: t }); toast(r.unchanged ? '기록을 수정했습니다' : '✓ 변경됨: ' + esc(r.name)); await loadFiles(true); }
+    catch (e) { toast('✗ 수정 실패: ' + esc(e.message), 'bad'); }
+    busy(false);
+  };
+}
+
+/* ---------- 회전 · 자르기 ---------- */
+const E = { img: null, rot: 0, crop: null, f: null, drag: null, scale: 1 };
+async function openEditor(f, url) {
+  try { E.img = await loadImg(url); } catch (e) { toast('✗ 이 파일은 편집할 수 없는 형식입니다', 'bad'); return; }
+  E.f = f; E.rot = 0; E.crop = { x: 0, y: 0, w: 1, h: 1 };
+  $('ed').classList.add('on'); drawEd();
+}
+function edDims() { const iw = E.img.naturalWidth, ih = E.img.naturalHeight; return E.rot % 180 ? [ih, iw] : [iw, ih]; }
+function drawRotated(ctx, W, H) {
+  ctx.save(); ctx.translate(W / 2, H / 2); ctx.rotate(E.rot * Math.PI / 180);
+  const [w, h] = E.rot % 180 ? [H, W] : [W, H];
+  ctx.drawImage(E.img, -w / 2, -h / 2, w, h); ctx.restore();
+}
+function drawEd() {
+  const cv = $('cv'), st = $('stage');
+  const [W, H] = edDims();
+  const maxW = st.clientWidth - 24, maxH = st.clientHeight - 24;
+  const s = Math.min(maxW / W, maxH / H, 1);
+  const dpr = window.devicePixelRatio || 1;
+  const cw = Math.round(W * s), ch = Math.round(H * s);
+  cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  E.cw = cw; E.ch = ch;
+  const c = cv.getContext('2d');
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawRotated(c, cw, ch);
+  const r = E.crop, x = r.x * cw, y = r.y * ch, w = r.w * cw, h = r.h * ch;
+  c.fillStyle = 'rgba(0,0,0,.55)';
+  c.fillRect(0, 0, cw, y); c.fillRect(0, y + h, cw, ch - y - h); c.fillRect(0, y, x, h); c.fillRect(x + w, y, cw - x - w, h);
+  c.strokeStyle = '#fff'; c.lineWidth = 2; c.strokeRect(x, y, w, h);
+  c.fillStyle = '#fff';
+  [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].forEach(([px, py]) => c.fillRect(px - 7, py - 7, 14, 14));
+}
+function edPt(e) { const b = $('cv').getBoundingClientRect(); return { x: (e.clientX - b.left) / E.cw, y: (e.clientY - b.top) / E.ch }; }
+$('cv').addEventListener('pointerdown', e => {
+  const p = edPt(e), r = E.crop, tx = 24 / E.cw, ty = 24 / E.ch;
+  const near = (a, b, t) => Math.abs(a - b) < t;
+  let mode = null;
+  if (near(p.x, r.x, tx) && near(p.y, r.y, ty)) mode = 'tl';
+  else if (near(p.x, r.x + r.w, tx) && near(p.y, r.y, ty)) mode = 'tr';
+  else if (near(p.x, r.x, tx) && near(p.y, r.y + r.h, ty)) mode = 'bl';
+  else if (near(p.x, r.x + r.w, tx) && near(p.y, r.y + r.h, ty)) mode = 'br';
+  else if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) mode = 'move';
+  if (!mode) return;
+  E.drag = { mode, p, r: Object.assign({}, r) };
+  $('cv').setPointerCapture(e.pointerId); e.preventDefault();
+});
+$('cv').addEventListener('pointermove', e => {
+  if (!E.drag) return;
+  const p = edPt(e), d = E.drag, o = d.r, dx = p.x - d.p.x, dy = p.y - d.p.y, MIN = 0.05;
+  const cl = v => Math.max(0, Math.min(1, v));
+  let x1 = o.x, y1 = o.y, x2 = o.x + o.w, y2 = o.y + o.h;
+  if (d.mode === 'move') {
+    const nx = Math.max(0, Math.min(1 - o.w, o.x + dx)), ny = Math.max(0, Math.min(1 - o.h, o.y + dy));
+    E.crop = { x: nx, y: ny, w: o.w, h: o.h };
+  } else {
+    if (d.mode[1] === 'l') x1 = Math.min(cl(o.x + dx), x2 - MIN); else x2 = Math.max(cl(x2 + dx), x1 + MIN);
+    if (d.mode[0] === 't') y1 = Math.min(cl(o.y + dy), y2 - MIN); else y2 = Math.max(cl(y2 + dy), y1 + MIN);
+    E.crop = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+  }
+  drawEd();
+});
+['pointerup', 'pointercancel'].forEach(t => $('cv').addEventListener(t, () => (E.drag = null)));
+$('edL').onclick = () => { E.rot = (E.rot + 270) % 360; E.crop = { x: 0, y: 0, w: 1, h: 1 }; drawEd(); };
+$('edR').onclick = () => { E.rot = (E.rot + 90) % 360; E.crop = { x: 0, y: 0, w: 1, h: 1 }; drawEd(); };
+$('edReset').onclick = () => { E.rot = 0; E.crop = { x: 0, y: 0, w: 1, h: 1 }; drawEd(); };
+$('edCancel').onclick = () => $('ed').classList.remove('on');
+window.addEventListener('resize', () => { if ($('ed').classList.contains('on')) drawEd(); });
+$('edSave').onclick = async () => {
+  if (E.rot === 0 && E.crop.w === 1 && E.crop.h === 1) { $('ed').classList.remove('on'); return; }
+  busy(true);
+  try {
+    const [W, H] = edDims();
+    const full = document.createElement('canvas'); full.width = W; full.height = H;
+    drawRotated(full.getContext('2d'), W, H);
+    const sx = Math.round(E.crop.x * W), sy = Math.round(E.crop.y * H), sw = Math.round(E.crop.w * W), sh = Math.round(E.crop.h * H);
+    const out = document.createElement('canvas'); out.width = sw; out.height = sh;
+    out.getContext('2d').drawImage(full, sx, sy, sw, sh, 0, 0, sw, sh);
+    const r = await api('replace', { id: E.f.id, data: await canvasToB64(out), edited: true }, 120000);
+    $('ed').classList.remove('on');
+    toast('✓ 편집 저장: ' + esc(r.name));
+    await loadFiles(true);
+  } catch (e) { toast('✗ 편집 저장 실패: ' + esc(e.message), 'bad'); }
+  busy(false);
+};
+
+/* ---------- 접속 / 설정 ---------- */
+function logout(msg) {
+  S.code = ''; S.name = ''; LS.del('code'); LS.del('name');
+  $('who').textContent = ''; $('btnSet').hidden = true;
+  $('loginMsg').textContent = msg || '';
+  show('vLogin');
+}
+$('btnLogin').onclick = async () => {
+  if (!API_URL) S.api = $('inApi').value.trim();
+  S.code = $('inCode').value.trim().toUpperCase();
+  $('loginMsg').textContent = '';
+  if (!S.api || !S.code) { $('loginMsg').textContent = '서버 주소와 접속코드를 입력하세요.'; return; }
+  busy(true);
+  try {
+    const r = await api('auth', {});
+    S.name = r.name; LS.set('api', S.api); LS.set('code', S.code); LS.set('name', S.name);
+    start();
+  } catch (e) { $('loginMsg').textContent = e instanceof NetError ? '서버에 연결하지 못했습니다. 주소와 인터넷을 확인하세요.' : e.message; }
+  busy(false);
+};
+$('btnSet').onclick = () => {
+  $('panel').innerHTML = `<h2>설정</h2><p>근무자: <b>${esc(S.name)}</b></p><p style="font-size:12px;word-break:break-all;color:var(--sub)">서버: ${esc(S.api)}</p>
+    <button class="btn" id="sQ">전송 대기열 보기</button><button class="btn danger" id="sOut">접속 해제 (코드 다시 입력)</button>
+    <button class="btn sm" data-close>닫기</button><div class="ver">버전 ${VERSION}</div>`;
+  openModal();
+  $('sQ').onclick = () => { closeModal(); openQueue(); };
+  $('sOut').onclick = async () => {
+    if ((await Q.all()).length && !confirm('아직 전송되지 않은 사진이 있습니다. 접속을 해제해도 사진은 폰에 남아 있고, 다시 접속하면 전송됩니다. 계속할까요?')) return;
+    closeModal(); logout();
+  };
+};
+function start() {
+  $('who').textContent = S.name; $('btnSet').hidden = false;
+  show('vMain'); updateBar(); pump();
+}
+
+/* ---------- 시작 ---------- */
+(function init() {
+  if (API_URL) $('apiWrap').style.display = 'none'; else $('inApi').value = S.api;
+  $('inJibun').value = LS.get('jibun', ''); $('inLoc').value = LS.get('loc', '');
+  $('onlyLoc').checked = LS.get('onlyLoc', false);
+  setGubun(S.gubun);
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (S.code && S.api) start(); else show('vLogin');
+})();
+</script>
+</body>
+</html>
