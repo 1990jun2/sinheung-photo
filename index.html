@@ -242,7 +242,7 @@ h3 small{font-weight:400}
 'use strict';
 /* ===== 관리자 설정: Apps Script 웹앱 주소를 넣으면 근무자는 코드만 입력합니다 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzlgE2Ie1B0ubWHnsld8vQhjEAhP0Uun5Pa6_wMpszWGBpTreCho3wJNsOq8TTfncK9Q/exec';
-const VERSION = '1.1.1';
+const VERSION = '1.1.2';
 const MAX_EDGE = 3200, JPEG_Q = 0.92;   // 고화질 저장 기준
 const DONG = '신흥동';
 const DOC_KINDS = ['주민등록등본', '주민등록초본', '외국인거소증명서', '임대차계약서'];
@@ -1387,7 +1387,20 @@ window.addEventListener('popstate', async () => {
   setGubun(S.gubun, true);
   try { await purgeBin(); } catch (e) {}
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    // 새 버전이 올라오면 자동으로 받아서 한 번 새로고침 (작업 중 입력값·대기목록은 폰에 그대로 남음)
+    const hadCtl = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadCtl || reloaded) return;
+      if (modalOpen() || $('busy').classList.contains('on') || curView === 'vImport') return;   // 작업 중이면 다음 실행 때 적용
+      reloaded = true; location.reload();
+    });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+      reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
+    }).catch(() => {});
+  }
   if (S.code && S.api) start(); else show('vLogin');
 })();
 </script>
