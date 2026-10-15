@@ -242,7 +242,7 @@ h3 small{font-weight:400}
 'use strict';
 /* ===== 관리자 설정: Apps Script 웹앱 주소를 넣으면 근무자는 코드만 입력합니다 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzlgE2Ie1B0ubWHnsld8vQhjEAhP0Uun5Pa6_wMpszWGBpTreCho3wJNsOq8TTfncK9Q/exec';
-const VERSION = '1.1.2';
+const VERSION = '1.1.3';
 const MAX_EDGE = 3200, JPEG_Q = 0.92;   // 고화질 저장 기준
 const DONG = '신흥동';
 const DOC_KINDS = ['주민등록등본', '주민등록초본', '외국인거소증명서', '임대차계약서'];
@@ -1347,8 +1347,8 @@ function pushGuard() {
   if (NAV.exiting) return;
   if (!(history.state && history.state.sh1)) history.pushState({ sh1: 1 }, '');
 }
-document.addEventListener('pointerdown', pushGuard, true);   // 사용자가 화면을 만진 뒤에 넣어야 브라우저가 건너뛰지 않음
-document.addEventListener('keydown', pushGuard, true);
+// 휴대폰 브라우저는 손가락을 '뗄 때' 사용자 동작으로 인정한다. 그 전에 넣으면 뒤로가기 때 무시되므로 떼는 시점·클릭 시점에 넣는다
+['click', 'pointerup', 'touchend', 'keydown'].forEach(t => document.addEventListener(t, pushGuard, true));
 window.addEventListener('popstate', async () => {
   if (NAV.exiting) return;
   const inline = document.querySelector('.modal.inl');
