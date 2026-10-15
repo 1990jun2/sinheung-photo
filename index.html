@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <style>
-:root{--navy:#1f3a5f;--navy2:#2c5282;--ink:#1a202c;--sub:#5a6474;--line:#d9dee6;--bg:#f3f5f8;--card:#fff;--ok:#1e7d4f;--warn:#b7791f;--err:#c53030;--doc:#2b6cb0;--pho:#2f855a}
+:root{--navy:#1f3a5f;--navy2:#2c5282;--ink:#1a202c;--sub:#5a6474;--faint:#b8c0cc;--line:#d9dee6;--bg:#f3f5f8;--card:#fff;--ok:#1e7d4f;--warn:#b7791f;--warnbg:#fff7e6;--err:#c53030;--doc:#2b6cb0;--pho:#2f855a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif}
 button,input,select{font:inherit;color:inherit}
@@ -21,65 +21,122 @@ header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;p
 header h1{font-size:17px;margin:0;flex:1;font-weight:700;letter-spacing:-.3px}
 header .who{font-size:13px;opacity:.85}
 header button{background:none;border:0;color:#fff;font-size:20px;padding:4px 6px;cursor:pointer}
-main{max-width:560px;margin:0 auto;padding:14px 16px calc(96px + env(safe-area-inset-bottom))}
+main{max-width:560px;margin:0 auto;padding:14px 16px calc(110px + env(safe-area-inset-bottom))}
 .view{display:none}.view.on{display:block}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:#e2e7ee;border-radius:12px;padding:4px;margin-bottom:12px}
 .seg button{border:0;background:none;padding:9px;border-radius:9px;font-weight:600;color:var(--sub);cursor:pointer}
 .seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fld{display:block}
 .fld span{display:block;font-size:13px;color:var(--sub);margin:0 0 4px 2px;font-weight:600}
 .fld input,.fld select{width:100%;height:52px;border:2px solid var(--line);border-radius:12px;padding:0 12px;font-size:20px;font-weight:700;background:#fff}
+.fld input::placeholder{color:var(--faint);font-weight:400;opacity:1}
 .fld input:focus,.fld select:focus{outline:0;border-color:var(--navy2)}
 .fld input.bad{border-color:var(--err)}
 .preview{margin:10px 0 4px;padding:10px 12px;border-radius:10px;background:#fff;border:1px dashed var(--line);font-size:14px;color:var(--sub);min-height:44px}
-.preview b{color:var(--ink)}.preview .e{color:var(--err);font-weight:600}
-h3{font-size:14px;margin:18px 0 8px 2px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.preview b{color:var(--ink)}.e{color:var(--err);font-weight:600}
+h3{font-size:14px;margin:18px 0 8px 2px;color:var(--sub);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 h3 i{width:8px;height:8px;border-radius:50%;display:inline-block}
-.grid{display:grid;gap:10px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
-.shot{border:0;border-radius:16px;min-height:88px;padding:10px 6px;color:#fff;font-weight:700;font-size:16px;line-height:1.25;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+h3 small{font-weight:400}
+.grid{display:grid;gap:10px}.g2{grid-template-columns:repeat(2,1fr)}
+.shot{border:0;border-radius:16px;min-height:76px;padding:10px 6px;color:#fff;font-weight:700;font-size:16px;line-height:1.25;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 .shot small{font-size:11px;font-weight:500;opacity:.85}
-.shot.doc{background:var(--doc)}.shot.pho{background:var(--pho);min-height:104px;font-size:19px}
+.shot.doc{background:var(--doc)}.shot.pho{background:var(--pho);min-height:96px;font-size:19px}
 .shot:active{transform:translateY(1px);filter:brightness(.92)}
-.shot:disabled{opacity:.45}
 .src{display:flex;gap:16px;justify-content:center;margin:14px 0 4px;font-size:14px;color:var(--sub)}
 .src label{display:flex;align-items:center;gap:5px}
 .btn{display:block;width:100%;height:50px;border-radius:12px;border:2px solid var(--navy);background:#fff;color:var(--navy);font-weight:700;margin-top:14px;cursor:pointer}
 .btn.primary{background:var(--navy);color:#fff}
+.btn.go{background:var(--ok);border-color:var(--ok);color:#fff}
 .btn.danger{border-color:var(--err);color:var(--err)}
+.btn.warn{border-color:var(--warn);background:var(--warn);color:#fff}
 .btn.sm{height:42px;margin-top:8px;font-size:15px}
+.btn:disabled{opacity:.4}
 .err{color:var(--err);font-weight:600;font-size:14px}
-.qbar{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line);display:none;align-items:center;gap:10px;font-size:14px;cursor:pointer}
-.qbar.on{display:flex}.qbar .dot{width:10px;height:10px;border-radius:50%;background:var(--warn)}
-.qbar.sending .dot{animation:pulse 1s infinite}.qbar.failed .dot{background:var(--err)}.qbar.offline .dot{background:#999}
-@keyframes pulse{50%{opacity:.25}}
-.qbar span{flex:1}
-.toast{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;max-width:92%;background:rgba(26,32,44,.94);color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.qbar{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--navy);color:#fff;display:none;align-items:center;gap:10px;font-size:15px;cursor:pointer;font-weight:600}
+.qbar.on{display:flex}.qbar span{flex:1}.qbar .n{background:#f6c343;color:#1a202c;border-radius:20px;padding:2px 10px;font-weight:800}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;width:max-content;max-width:92%;background:rgba(26,32,44,.94);color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .toast.on{display:block}.toast.warn{background:#7b4a0e}.toast.bad{background:#8b1d1d}
 .bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.bar .t{flex:1;font-weight:700;font-size:18px}
-.bar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font-size:14px}
+.bar .t{flex:1;font-weight:700;font-size:18px;min-width:0}
+.bar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font-size:14px;white-space:nowrap}
 .chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--sub);margin-bottom:6px}
-.list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.card{background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--line);cursor:pointer;text-align:left;padding:0}
-.card .im{aspect-ratio:3/4;background:#e9edf2 center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:#9aa5b4;font-size:26px}
-.card .nm{font-size:11.5px;padding:5px 6px 2px;line-height:1.3;word-break:keep-all;font-weight:600}
-.card .mt{font-size:10.5px;color:var(--sub);padding:0 6px 6px}
-.card.over{border-color:var(--warn)}
-.empty{color:var(--sub);font-size:14px;padding:10px 2px}
-.modal{position:fixed;inset:0;z-index:15;background:rgba(10,15,25,.55);display:none;align-items:flex-end;justify-content:center}
+.empty{color:var(--sub);font-size:14px;padding:6px 2px}
+.note{font-size:13px;color:var(--sub);background:#fff;border-radius:10px;padding:8px 10px;margin:6px 0}
+.note.w{background:var(--warnbg);color:#7b4a0e}
+/* 목록 행 */
+.sect{background:#fff;border-radius:14px;padding:4px 12px 8px;margin-bottom:12px;border:1px solid var(--line)}
+.sect>h4{margin:10px 0 4px;font-size:16px}
+.glabel{font-size:12.5px;color:var(--sub);margin:10px 0 2px;font-weight:700}
+.rows{display:flex;flex-direction:column}
+.rw{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #eef1f5;background:#fff;cursor:pointer}
+.rw:first-child{border-top:0}
+.rw img,.rw .ph{width:54px;height:54px;object-fit:cover;border-radius:8px;background:#e9edf2;flex:none;display:flex;align-items:center;justify-content:center;color:#9aa5b4}
+.rw .x{flex:1;min-width:0}
+.rw .nm{font-size:14px;font-weight:700;word-break:keep-all;overflow-wrap:anywhere;line-height:1.3}
+.rw .st{font-size:12px;color:var(--sub);margin-top:2px}
+.rw .st.w{color:var(--warn);font-weight:600}.rw .st.f{color:var(--err);font-weight:600}
+.rw .hdl{flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#8a94a3;touch-action:none;cursor:grab;border-radius:8px}
+.rw.dragging{background:#eef4ff;box-shadow:0 4px 14px rgba(0,0,0,.15);border-radius:10px;position:relative;z-index:2}
+.tag{display:inline-block;font-size:11px;border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:700;vertical-align:1px}
+.tag.w{background:var(--warnbg);color:#7b4a0e}.tag.t{background:#edf2f7;color:var(--sub)}
+.dockbar{position:fixed;left:0;right:0;bottom:0;z-index:7;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:none;gap:8px}
+.dockbar.on{display:flex}.dockbar .btn{margin:0;flex:1}
+/* 슬롯 그리드(파일 보기) */
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{border-radius:10px;border:1px solid var(--line);background:#fff;overflow:hidden;cursor:pointer;padding:0;text-align:left}
+.slot .im{aspect-ratio:4/3;background:#e9edf2 center/cover no-repeat}
+.slot .nm{font-size:12px;font-weight:700;padding:4px 6px 0}.slot .mt{font-size:10.5px;color:var(--sub);padding:0 6px 5px}
+.slot.empty{border-style:dashed;background:transparent;cursor:default}
+.slot.empty .im{background:transparent;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:13px}
+/* 모달 */
+.modal{position:fixed;inset:0;z-index:52;background:rgba(10,15,25,.55);display:none;align-items:flex-end;justify-content:center}
 .modal.on{display:flex}
-.panel{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
-.panel h2{font-size:17px;margin:0 0 10px}
-.panel .big{width:100%;max-height:50vh;object-fit:contain;background:#111;border-radius:10px;display:block}
+.modal.center{align-items:center;padding:16px}
+.panel{background:#fff;width:100%;max-width:560px;max-height:94vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+.modal.center .panel{border-radius:18px;padding-bottom:16px}
+.panel h2{font-size:18px;margin:0 0 10px}
+.panel .big{width:100%;max-height:46vh;object-fit:contain;background:#111;border-radius:10px;display:block;cursor:zoom-in}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .acts .btn{margin:0}
-.qitem{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
-.qitem img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:#ddd}
-.qitem .x{flex:1;min-width:0}.qitem .x div{word-break:keep-all}
-.qitem .st{font-size:12px;color:var(--sub)}.qitem .st.f{color:var(--err)}
-.qitem button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;font-size:13px;cursor:pointer}
-.ed{position:fixed;inset:0;z-index:30;background:#0d1117;display:none;flex-direction:column}
+.target{font-size:22px;font-weight:800;text-align:center;padding:14px 8px;background:var(--bg);border-radius:12px;margin:6px 0 4px;word-break:keep-all}
+.dlg p{margin:6px 0;font-size:15px}
+.dlg ul{margin:6px 0;padding-left:18px;font-size:14px}
+/* 키패드 */
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.pad button{height:58px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:22px;font-weight:800;cursor:pointer;position:relative;line-height:1}
+.pad button small{display:block;font-size:10px;font-weight:600;color:var(--sub);margin-top:3px}
+.pad button.used{background:#edf0f4;color:#a0a8b4;border-color:#e2e6ec}
+.pad button.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+.pad button.sel small{color:#dfe7f3}
+.pad button.used.sel{background:var(--warn);border-color:var(--warn);color:#fff}
+.padimg{width:100%;height:30vh;object-fit:contain;background:#111;border-radius:10px;display:block}
+.fname{font-size:17px;font-weight:800;text-align:center;margin:10px 0 0;word-break:break-all}
+/* 가져오기 */
+.imp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;user-select:none;-webkit-user-select:none}
+.imp .c{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#ddd;border:3px solid transparent;-webkit-touch-callout:none}
+.imp .c img{width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-touch-callout:none}
+.imp .c.on{border-color:var(--navy2)}
+.imp .c .b{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.85);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.imp .c.on .b{background:var(--navy2);color:#fff}
+.imp.mode .c:not(.on){opacity:.75}
+/* 전체화면 보기 */
+.vw{position:fixed;inset:0;z-index:50;background:#000;display:none;flex-direction:column;color:#fff}
+.vw.on{display:flex}
+.vw .top{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 12px 8px;background:rgba(0,0,0,.6)}
+.vw .top .t{flex:1;min-width:0;font-size:14px;font-weight:700;word-break:break-all}
+.vw .top .c{font-size:13px;opacity:.8;white-space:nowrap}
+.vw .top button{background:#2d333b;border:0;color:#fff;border-radius:10px;padding:8px 12px;font-size:15px;cursor:pointer}
+.vw .stage{flex:1;overflow:hidden;position:relative;touch-action:none;display:flex;align-items:center;justify-content:center}
+.vw .stage img{max-width:100%;max-height:100%;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.vw .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:0;color:#fff;width:40px;height:64px;border-radius:10px;font-size:24px;cursor:pointer}
+.vw .nav.l{left:6px}.vw .nav.r{right:6px}
+.vw .bot{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(0,0,0,.6)}
+.vw .bot button{flex:1;height:48px;border:0;border-radius:10px;background:#2d333b;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.vw .bot button.d{background:#5c1f1f}
+.vw .hint{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:12px;opacity:.6;pointer-events:none}
+/* 회전·자르기 */
+.ed{position:fixed;inset:0;z-index:55;background:#0d1117;display:none;flex-direction:column}
 .ed.on{display:flex}
 .ed .stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none;padding:12px}
 .ed canvas{touch-action:none;max-width:100%;max-height:100%}
@@ -87,7 +144,7 @@ h3 i{width:8px;height:8px;border-radius:50%;display:inline-block}
 .ed .tools button{height:52px;border:0;border-radius:10px;background:#2d333b;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
 .ed .tools .save{background:#2f855a}
 .ed .hint{color:#aab;font-size:12px;text-align:center;padding:6px}
-.busy{position:fixed;inset:0;z-index:40;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;font-weight:700;color:var(--navy)}
+.busy{position:fixed;inset:0;z-index:70;background:rgba(255,255,255,.7);display:none;align-items:center;justify-content:center;font-weight:700;color:var(--navy);text-align:center;padding:20px}
 .busy.on{display:flex}
 .login p{color:var(--sub);font-size:14px}
 .ver{font-size:12px;color:var(--sub);text-align:center;margin-top:20px}
@@ -114,41 +171,62 @@ h3 i{width:8px;height:8px;border-radius:50%;display:inline-block}
   <!-- 촬영 -->
   <section id="vMain" class="view">
     <div class="seg" id="seg"><button data-g="토건" class="on">토지건물</button><button data-g="구분">구분건물</button></div>
-    <div class="row">
-      <label class="fld"><span>지번</span><input id="inJibun" placeholder="4902" autocomplete="off" enterkeyhint="next"></label>
-      <label class="fld"><span id="lblLoc">층 / 호</span><input id="inLoc" placeholder="2층" autocomplete="off" enterkeyhint="done"></label>
+    <div class="two">
+      <label class="fld"><span>지번</span><input id="inJibun" placeholder="예) 4902" autocomplete="off" inputmode="numeric" enterkeyhint="next"></label>
+      <label class="fld"><span id="lblLoc">층 / 호</span><input id="inLoc" placeholder="예) 2층" autocomplete="off" enterkeyhint="done"></label>
     </div>
     <div class="preview" id="preview"></div>
 
-    <h3><i style="background:var(--doc)"></i>서류 <small style="font-weight:400">→ 03. 서류</small></h3>
-    <div class="grid g3">
-      <button class="shot doc" data-kind="주민등록등본">주민등록<br>등본</button>
-      <button class="shot doc" data-kind="주민등록초본">주민등록<br>초본</button>
-      <button class="shot doc" data-kind="임대차계약서">임대차<br>계약서</button>
-    </div>
-    <h3><i style="background:var(--pho)"></i>현장사진 <small style="font-weight:400">→ 02. 사진</small></h3>
+    <h3><i style="background:var(--doc)"></i>관련서류 <small>→ 03. 서류</small></h3>
     <div class="grid g2">
-      <button class="shot pho" data-kind="외관">외관<small>층 입력 없어도 됨</small></button>
-      <button class="shot pho" data-kind="내부">내부<small id="inHint">층 기록됨</small></button>
+      <button class="shot doc" data-kind="주민등록등본">주민등록등본</button>
+      <button class="shot doc" data-kind="주민등록초본">주민등록초본</button>
+      <button class="shot doc" data-kind="외국인거소증명서">외국인거소증명서</button>
+      <button class="shot doc" data-kind="임대차계약서">임대차계약서</button>
+    </div>
+    <h3><i style="background:var(--pho)"></i>현장사진 <small>→ 02. 사진 · 슬롯 번호 지정</small></h3>
+    <div class="grid g2">
+      <button class="shot pho" data-kind="외관">외관<small>보통 1번</small></button>
+      <button class="shot pho" data-kind="내부">내부<small id="inHint">층별 1장</small></button>
     </div>
     <div class="src">
       <label><input type="radio" name="src" value="camera" checked> 카메라로 촬영</label>
       <label><input type="radio" name="src" value="album"> 앨범에서 선택</label>
     </div>
-    <button class="btn" id="btnFiles">이 지번 파일 보기 · 수정</button>
+    <button class="btn" id="btnFiles">이 지번 업로드된 파일 보기 · 수정</button>
   </section>
 
-  <!-- 파일 목록 -->
+  <!-- 대기목록 -->
+  <section id="vQueue" class="view">
+    <div class="bar"><button data-back>← 촬영</button><div class="t" id="qTitle">업로드 대기목록</div><button id="btnBin">제거함</button></div>
+    <div id="qNote"></div>
+    <div id="qBody"></div>
+  </section>
+
+  <!-- 앨범 가져오기 (서류 여러 장) -->
+  <section id="vImport" class="view">
+    <div class="bar"><div class="t" id="impTitle"></div></div>
+    <div class="note" id="impHint"></div>
+    <div class="imp" id="impGrid"></div>
+  </section>
+
+  <!-- 업로드된 파일 -->
   <section id="vFiles" class="view">
-    <div class="bar"><button id="btnBack">← 촬영</button><div class="t" id="filesTitle"></div><button id="btnReload">새로고침</button></div>
+    <div class="bar"><button data-back>← 촬영</button><div class="t" id="filesTitle"></div><button id="btnReload">새로고침</button></div>
     <label class="chk"><input type="checkbox" id="onlyLoc"> <span id="onlyLocTxt">이 층/호 서류만 보기</span></label>
     <div id="fileBody"></div>
   </section>
 </main>
 
-<div class="qbar" id="qbar"><i class="dot"></i><span id="qtxt"></span><b>›</b></div>
+<div class="qbar" id="qbar"><span>업로드 대기 <b class="n" id="qcount">0</b> 건 · 눌러서 확인 후 업로드</span><b>›</b></div>
+<div class="dockbar" id="dock"></div>
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal"><div class="panel" id="panel"></div></div>
+<div class="vw" id="vw">
+  <div class="top"><div class="t" id="vwName"></div><span class="c" id="vwCount"></span><button id="vwClose">닫기</button></div>
+  <div class="stage" id="vwStage"><img id="vwImg" alt=""><button class="nav l" id="vwPrev">‹</button><button class="nav r" id="vwNext">›</button><div class="hint">두 손가락·두 번 탭으로 확대 · 좌우로 넘기기</div></div>
+  <div class="bot" id="vwBot"></div>
+</div>
 <div class="ed" id="ed">
   <div class="hint">모서리를 끌어 자르고, 가운데를 끌어 옮깁니다</div>
   <div class="stage" id="stage"><canvas id="cv"></canvas></div>
@@ -163,11 +241,14 @@ h3 i{width:8px;height:8px;border-radius:50%;display:inline-block}
 <script>
 'use strict';
 /* ===== 관리자 설정: Apps Script 웹앱 주소를 넣으면 근무자는 코드만 입력합니다 ===== */
-const API_URL = '';
-const VERSION = '1.0.0';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyzlgE2Ie1B0ubWHnsld8vQhjEAhP0Uun5Pa6_wMpszWGBpTreCho3wJNsOq8TTfncK9Q/exec';
+const VERSION = '1.1.0';
 const MAX_EDGE = 3200, JPEG_Q = 0.92;   // 고화질 저장 기준
 const DONG = '신흥동';
-const DOC_KINDS = ['주민등록등본', '주민등록초본', '임대차계약서'];
+const DOC_KINDS = ['주민등록등본', '주민등록초본', '외국인거소증명서', '임대차계약서'];
+const PHOTO_KINDS = ['외관', '내부'];
+const SLOTS = 12;
+const BIN_DAYS = 7;
 
 /* ---------- 작은 도구 ---------- */
 const $ = id => document.getElementById(id);
@@ -177,8 +258,13 @@ const LS = {
   set(k, v) { try { localStorage.setItem('sh1.' + k, JSON.stringify(v)); } catch (e) {} },
   del(k) { try { localStorage.removeItem('sh1.' + k); } catch (e) {} },
 };
-const S = { api: API_URL || LS.get('api', ''), code: LS.get('code', ''), name: LS.get('name', ''), gubun: LS.get('gubun', '토건') };
+const S = {
+  api: API_URL || LS.get('api', ''), code: LS.get('code', ''), name: LS.get('name', ''), gubun: LS.get('gubun', '토건'),
+  committed: '', needShotConfirm: false,
+  peek: { docs: {}, photos: {} }, peekOk: false,
+};
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const isDocKind = k => DOC_KINDS.includes(k);
 
 let toastTimer;
 function toast(msg, kind) {
@@ -186,10 +272,24 @@ function toast(msg, kind) {
   t.className = 'toast on' + (kind ? ' ' + kind : '');
   t.innerHTML = msg;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => (t.className = 'toast'), kind === 'bad' ? 6000 : 3200);
+  toastTimer = setTimeout(() => (t.className = 'toast'), kind === 'bad' ? 6000 : 3000);
 }
-const busy = on => $('busy').classList.toggle('on', !!on);
-function show(v) { ['vLogin', 'vMain', 'vFiles'].forEach(x => $(x).classList.toggle('on', x === v)); window.scrollTo(0, 0); }
+const busy = (on, msg) => { $('busy').classList.toggle('on', !!on); $('busy').textContent = msg || '처리 중…'; };
+let curView = 'vLogin';
+function show(v) {
+  curView = v;
+  ['vLogin', 'vMain', 'vQueue', 'vImport', 'vFiles'].forEach(x => $(x).classList.toggle('on', x === v));
+  if (v !== 'vQueue' && v !== 'vFiles' && v !== 'vImport') setDock('');
+  window.scrollTo(0, 0);
+  updateBar();
+}
+document.querySelectorAll('[data-back]').forEach(b => b.onclick = async () => {
+  if (curView === 'vQueue' && Q.dirty && !(await ask({ title: '순서 변경 취소', html: '<p>[변경완료]를 누르지 않은 순서 변경은 취소됩니다.</p>', buttons: [{ label: '계속 편집', value: false }, { label: '나가기', value: true, cls: 'primary' }] }))) return;
+  if (curView === 'vFiles' && F.dirty && !(await ask({ title: '순서 변경 취소', html: '<p>[변경완료]를 누르지 않은 순서 변경은 취소됩니다.</p>', buttons: [{ label: '계속 편집', value: false }, { label: '나가기', value: true, cls: 'primary' }] }))) return;
+  Q.dirty = false; F.dirty = false;
+  show('vMain');
+});
+function setDock(html) { const d = $('dock'); d.innerHTML = html; d.classList.toggle('on', !!html); }
 
 /* ---------- 입력 정리 (서버 Code.gs와 같은 규칙) ---------- */
 function normJibun(s) {
@@ -216,21 +316,31 @@ function normLoc(s, gubun) {
   if ((m = v.match(/^(\d{3,4})호$/))) return m[1] + '호';
   throw new Error('층/호 형식 확인 (예: 1층, 지층, 옥탑, 비01호, 201호)');
 }
-/** 현재 입력값으로 저장 대상 만들기. 문제가 있으면 오류 */
+const photoKey = (gubun, jibun, loc) => (gubun === '구분' ? jibun + '_' + loc.replace(/호$/, '') : jibun);
+/** 저장 대상. 문제가 있으면 오류 */
 function makeTarget(kind, src) {
   src = src || { gubun: S.gubun, jibun: $('inJibun').value, loc: $('inLoc').value };
   const gubun = src.gubun === '구분' ? '구분' : '토건';
   const jibun = normJibun(src.jibun);
   const loc = normLoc(src.loc, gubun);
-  const isDoc = DOC_KINDS.includes(kind);
+  const isDoc = isDocKind(kind);
   if (!loc && gubun === '구분') throw new Error('구분건물은 호를 입력하세요');
   if (!loc && isDoc) throw new Error('서류는 층 또는 호를 입력하세요');
-  const key = gubun === '구분' ? jibun + '_' + loc.replace(/호$/, '') : jibun;
-  return { gubun, jibun, loc, kind, isDoc, key };
+  return { gubun, jibun, loc, kind, isDoc, key: photoKey(gubun, jibun, loc) };
 }
-function nameHint(t) {
-  return t.isDoc ? `${DONG} ${t.jibun} ${t.loc} ${t.kind}<b>N</b>.jpg` : `${t.key}-사-<b>N</b>.jpg${t.loc ? ' <small>(' + esc(t.loc) + ' ' + t.kind + ')</small>' : ' <small>(' + t.kind + ')</small>'}`;
+/** 세대(지번+층/호) 식별자와 표시 */
+const segKey = t => `${t.gubun}|${t.jibun}|${t.loc}`;
+const segLabel = t => `${DONG} ${t.jibun}${t.loc ? ' ' + t.loc : ''}${t.gubun === '구분' ? ' (구분)' : ''}`;
+function readSeg() {
+  const gubun = S.gubun;
+  const jibun = normJibun($('inJibun').value);
+  const loc = normLoc($('inLoc').value, gubun);
+  if (gubun === '구분' && !loc) throw new Error('구분건물은 호를 입력하세요');
+  return { gubun, jibun, loc };
 }
+const docGk = it => `${it.jibun}|${it.loc}|${it.kind}`;
+const docName = (jibun, loc, kind, n) => `${DONG} ${jibun} ${loc} ${kind}${n}.jpg`;
+const photoName = (key, slot, review) => `${key}-사-${slot}${review ? ' (검토)' : ''}.jpg`;
 
 /* ---------- 서버 통신 ---------- */
 class NetError extends Error {}
@@ -272,237 +382,803 @@ async function toJpeg(file) {
 const blobToB64 = b => new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = bad; r.readAsDataURL(b); });
 const canvasToB64 = cv => new Promise(r => cv.toBlob(b => r(blobToB64(b)), 'image/jpeg', JPEG_Q));
 
-/* ---------- 오프라인 대기열 (폰 안에 보관) ---------- */
-const Q = {
+/* ---------- 폰 안 저장소: 대기목록(q)과 제거함(bin) ---------- */
+const DB = {
   db: null,
   open() {
     if (this.db) return Promise.resolve(this.db);
     return new Promise((ok, bad) => {
-      const rq = indexedDB.open('sh1-queue', 1);
-      rq.onupgradeneeded = () => rq.result.createObjectStore('q', { keyPath: 'id' });
+      const rq = indexedDB.open('sh1-queue', 2);
+      rq.onupgradeneeded = () => {
+        const d = rq.result;
+        if (!d.objectStoreNames.contains('q')) d.createObjectStore('q', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('bin')) d.createObjectStore('bin', { keyPath: 'id' });
+      };
       rq.onsuccess = () => ok((this.db = rq.result));
       rq.onerror = () => bad(rq.error);
     });
   },
-  async tx(mode, fn) {
+  async tx(store, mode, fn) {
     const db = await this.open();
-    return new Promise((ok, bad) => { const t = db.transaction('q', mode); const r = fn(t.objectStore('q')); t.oncomplete = () => ok(r && r.result); t.onerror = () => bad(t.error); });
+    return new Promise((ok, bad) => { const t = db.transaction(store, mode); const r = fn(t.objectStore(store)); t.oncomplete = () => ok(r && r.result); t.onerror = () => bad(t.error); });
   },
-  put(x) { return this.tx('readwrite', s => s.put(x)); },
-  del(id) { return this.tx('readwrite', s => s.delete(id)); },
-  async all() { return ((await this.tx('readonly', s => s.getAll())) || []).sort((a, b) => a.at - b.at); },
+  put(store, x) { return this.tx(store, 'readwrite', s => s.put(x)); },
+  del(store, id) { return this.tx(store, 'readwrite', s => s.delete(id)); },
+  get(store, id) { return this.tx(store, 'readonly', s => s.get(id)); },
+  async all(store) { return ((await this.tx(store, 'readonly', s => s.getAll())) || []).sort((a, b) => (a.order || a.at) - (b.order || b.at)); },
 };
-let pumping = false, retryTimer = null;
-async function pump() {
-  if (pumping) return;
-  pumping = true;
-  try {
-    for (const it of await Q.all()) {
-      if (it.status === 'fail') continue;
-      updateBar('sending');
-      try {
-        const r = await api('upload', { gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind, cid: it.id, data: await blobToB64(it.blob) }, 120000);
-        await Q.del(it.id);
-        if (r.over) toast(`⚠ ${esc(r.name)} 저장됨<br>사진이 ${r.count}장 — 조서 칸(12장)을 넘었습니다`, 'warn');
-        else toast('✓ 저장됨: ' + esc(r.name));
-        if ($('vFiles').classList.contains('on')) loadFiles(true);
-      } catch (e) {
-        if (e instanceof NetError) break;          // 연결 문제: 그대로 두고 나중에 재시도
-        if (e instanceof AuthError) { logout(e.message); break; }
-        it.status = 'fail'; it.error = e.message; await Q.put(it);
-        toast('✗ 저장 실패: ' + esc(e.message), 'bad');
-      }
-    }
-  } finally {
-    pumping = false;
-    const left = (await Q.all()).filter(x => x.status !== 'fail').length;
-    clearTimeout(retryTimer);
-    if (left) retryTimer = setTimeout(pump, 20000);
-    updateBar();
-  }
+const Q = { dirty: false };
+async function addToQueue(t, blob, extra) {
+  const now = Date.now();
+  const it = Object.assign({ id: uid(), gubun: t.gubun, jibun: t.jibun, loc: t.loc, kind: t.kind, blob, at: now, order: now, status: 'wait' }, extra || {});
+  await DB.put('q', it);
+  updateBar();
+  return it;
 }
-async function updateBar(state) {
-  const all = await Q.all();
-  const wait = all.filter(x => x.status !== 'fail').length, fail = all.length - wait;
-  const bar = $('qbar');
-  bar.className = 'qbar' + (all.length ? ' on' : '');
-  if (!all.length) return;
-  const off = !navigator.onLine;
-  bar.classList.add(fail ? 'failed' : off ? 'offline' : (state === 'sending' || pumping) ? 'sending' : 'x');
-  $('qtxt').textContent = [wait ? `전송 대기 ${wait}건` + (off ? ' (인터넷 연결되면 자동 전송)' : pumping ? ' · 전송 중' : '') : '', fail ? `실패 ${fail}건` : ''].filter(Boolean).join(' · ');
+async function toBin(it) {
+  const x = Object.assign({}, it, { removedAt: Date.now(), status: 'wait', error: '' });
+  await DB.put('bin', x);
+  await DB.del('q', it.id);
 }
-window.addEventListener('online', () => { updateBar(); pump(); });
-window.addEventListener('offline', () => updateBar());
-document.addEventListener('visibilitychange', () => { if (!document.hidden) pump(); });
+async function purgeBin() {
+  const lim = Date.now() - BIN_DAYS * 864e5;
+  for (const x of await DB.all('bin')) if ((x.removedAt || 0) < lim) await DB.del('bin', x.id);
+}
+async function updateBar() {
+  let n = 0;
+  try { n = (await DB.all('q')).length; } catch (e) {}
+  $('qcount').textContent = n;
+  $('qbar').classList.toggle('on', n > 0 && curView === 'vMain');
+}
+$('qbar').onclick = () => openQueue();
 
-async function openQueue() {
-  const all = await Q.all();
-  const urls = [];
-  $('panel').innerHTML = `<h2>전송 대기열 (${all.length}건)</h2>` + (all.length ? all.map(it => {
-    const u = URL.createObjectURL(it.blob); urls.push(u);
-    let nm; try { nm = nameHint(makeTarget(it.kind, it)).replace(/<[^>]+>/g, ''); } catch (e) { nm = it.jibun + ' ' + it.kind; }
-    return `<div class="qitem"><img src="${u}" alt=""><div class="x"><div>${esc(nm)}</div><div class="st ${it.status === 'fail' ? 'f' : ''}">${it.status === 'fail' ? '실패: ' + esc(it.error) : '대기 중'} · ${new Date(it.at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</div></div>
-      ${it.status === 'fail' ? `<button data-retry="${it.id}">재시도</button>` : ''}<button data-drop="${it.id}">버리기</button></div>`;
-  }).join('') : '<p class="empty">대기 중인 사진이 없습니다.</p>') + `<button class="btn primary sm" id="qNow">지금 전송</button><button class="btn sm" data-close>닫기</button>`;
-  openModal(() => urls.forEach(URL.revokeObjectURL));
-  $('qNow').onclick = () => { closeModal(); pump(); };
-  $('panel').querySelectorAll('[data-retry]').forEach(b => b.onclick = async () => {
-    const it = all.find(x => x.id === b.dataset.retry); it.status = 'wait'; it.error = ''; await Q.put(it); closeModal(); pump();
-  });
-  $('panel').querySelectorAll('[data-drop]').forEach(b => b.onclick = async () => {
-    if (!confirm('이 사진을 전송하지 않고 버릴까요? (폰에서만 삭제됩니다)')) return;
-    await Q.del(b.dataset.drop); closeModal(); updateBar(); openQueue();
+/* ---------- 대화상자 ---------- */
+let modalResolve = null, onModalClose = null;
+function openPanel(html, opts) {
+  opts = opts || {};
+  closeModal(true);
+  $('modal').className = 'modal on' + (opts.center ? ' center' : '');
+  $('panel').innerHTML = html;
+  onModalClose = opts.onClose || null;
+}
+function closeModal(silent) {
+  if (!$('modal').classList.contains('on')) return;
+  $('modal').className = 'modal';
+  const r = modalResolve; modalResolve = null;
+  const c = onModalClose; onModalClose = null;
+  if (c) c();
+  if (r && !silent) r(undefined);
+}
+const modalOpen = () => $('modal').classList.contains('on');
+$('modal').addEventListener('click', e => { if (e.target.hasAttribute('data-close')) closeModal(); });
+/** 버튼을 고를 때까지 기다리는 대화상자 */
+function ask({ title, html, buttons }) {
+  return new Promise(resolve => {
+    openPanel(`<div class="dlg">${title ? `<h2>${esc(title)}</h2>` : ''}${html || ''}<div class="acts" style="grid-template-columns:repeat(${Math.min(buttons.length, 3)},1fr)">${buttons.map((b, i) => `<button class="btn ${b.cls || ''}" data-i="${i}">${esc(b.label)}</button>`).join('')}</div></div>`, { center: true });
+    modalResolve = resolve;
+    $('panel').querySelectorAll('[data-i]').forEach(b => b.onclick = () => { const v = buttons[+b.dataset.i].value; modalResolve = null; closeModal(true); resolve(v); });
   });
 }
-$('qbar').onclick = openQueue;
 
-/* ---------- 모달 ---------- */
-let onModalClose = null;
-function openModal(cleanup) { onModalClose = cleanup || null; $('modal').classList.add('on'); }
-function closeModal() { $('modal').classList.remove('on'); if (onModalClose) { onModalClose(); onModalClose = null; } }
-$('modal').addEventListener('click', e => { if (e.target.id === 'modal' || e.target.hasAttribute('data-close')) closeModal(); });
+/* ---------- 지번·층 확인 팝업 ---------- */
+async function pendingOther(seg) {
+  const all = await DB.all('q');
+  return { total: all.length, other: seg ? all.filter(x => segKey(x) !== segKey(seg)).length : all.length };
+}
+async function confirmSeg(seg, why) {
+  const p = await pendingOther(seg);
+  const head = why === 'shot' ? '촬영 전 확인' : '지번·층(호) 확인';
+  const html = `<div class="target">${esc(segLabel(seg))}</div><p style="text-align:center">이 지번과 층·호가 맞습니까?</p>` +
+    (why === 'change' && p.other ? `<p class="note w">⚠ 업로드하지 않은 다른 세대 사진이 <b>${p.other}장</b> 대기목록에 있습니다.</p>` : '');
+  return ask({ title: head, html, buttons: [{ label: '수정', value: false }, { label: '맞음', value: true, cls: 'primary' }] });
+}
+async function startupNotice() {
+  const p = await pendingOther(null);
+  await ask({ title: '확인', html: `<p style="font-size:18px;font-weight:700;text-align:center;margin:14px 0">지번과 층·호 정보를 확인하세요</p>` +
+    (p.total ? `<p class="note w">⚠ 업로드하지 않은 사진이 <b>${p.total}장</b> 남아 있습니다. 하단 대기목록에서 확인 후 업로드하세요.</p>` : ''), buttons: [{ label: '확인', value: true, cls: 'primary' }] });
+  if (curView === 'vMain') $('inJibun').focus();
+}
 
 /* ---------- 촬영 화면 ---------- */
-function setGubun(g) {
+function setGubun(g, silent) {
   S.gubun = g; LS.set('gubun', g);
   $('seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.g === g));
   $('lblLoc').textContent = g === '구분' ? '호 (필수)' : '층 / 호';
-  $('inLoc').placeholder = g === '구분' ? '101' : '2층';
-  $('inHint').textContent = g === '구분' ? '호별 사진' : '층 기록됨';
+  $('inLoc').placeholder = g === '구분' ? '예) 101' : '예) 2층';
+  $('inHint').textContent = g === '구분' ? '호별' : '층별 1장';
   $('onlyLocTxt').textContent = g === '구분' ? '이 호 서류만 보기' : '이 층/호 서류만 보기';
   renderPreview();
+  if (!silent) scheduleSegCheck();
 }
 $('seg').onclick = e => { const b = e.target.closest('button'); if (b) setGubun(b.dataset.g); };
 
 function renderPreview() {
-  LS.set('jibun', $('inJibun').value); LS.set('loc', $('inLoc').value);
   const p = $('preview');
   let jOk = true, lOk = true, jv = '', lv = '';
   try { jv = normJibun($('inJibun').value); } catch (e) { jOk = !$('inJibun').value.trim() ? null : false; }
   try { lv = normLoc($('inLoc').value, S.gubun); } catch (e) { lOk = false; }
   $('inJibun').classList.toggle('bad', jOk === false);
   $('inLoc').classList.toggle('bad', lOk === false);
-  if (jOk === null) { p.innerHTML = '지번을 입력하세요'; return; }
+  if (jOk === null) { p.innerHTML = '지번과 층·호를 입력하세요'; return; }
   if (!jOk) { p.innerHTML = '<span class="e">지번 형식 확인 (예: 4902, 4677-1)</span>'; return; }
   if (!lOk) { p.innerHTML = `<span class="e">${esc(S.gubun === '구분' ? '호 형식 확인 (예: 101, B01호)' : '층/호 형식 확인 (예: 1층, 지층, 옥탑, 비01호)')}</span>`; return; }
-  const key = S.gubun === '구분' ? (lv ? jv + '_' + lv.replace(/호$/, '') : '') : jv;
+  const key = S.gubun === '구분' ? (lv ? photoKey('구분', jv, lv) : '') : jv;
   p.innerHTML = `<b>${DONG} ${esc(jv)}${lv ? ' ' + esc(lv) : ''}</b><br>` +
     (lv ? `서류: ${DONG} ${esc(jv)} ${esc(lv)} 등본<b>N</b>.jpg<br>` : '서류: <span class="e">층/호를 넣어야 촬영 가능</span><br>') +
-    (key ? `사진: ${esc(key)}-사-<b>N</b>.jpg` : '사진: <span class="e">호를 넣어야 촬영 가능</span>');
+    (key ? `사진: ${esc(key)}-사-<b>슬롯</b>.jpg` : '사진: <span class="e">호를 넣어야 촬영 가능</span>');
 }
 $('inJibun').addEventListener('input', renderPreview);
 $('inLoc').addEventListener('input', renderPreview);
 $('inJibun').addEventListener('keydown', e => { if (e.key === 'Enter') $('inLoc').focus(); });
 $('inLoc').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+// 지번·층을 바꾸고 입력칸을 벗어나면 확인 팝업
+let segTimer = null;
+function scheduleSegCheck() {
+  clearTimeout(segTimer);
+  segTimer = setTimeout(async () => {
+    if (modalOpen() || curView !== 'vMain') return;
+    if (document.activeElement === $('inJibun') || document.activeElement === $('inLoc')) return;
+    let seg; try { seg = readSeg(); } catch (e) { return; }
+    if (segKey(seg) === S.committed) return;
+    if (await confirmSeg(seg, 'change')) { S.committed = segKey(seg); S.needShotConfirm = true; }
+    else $('inJibun').focus();
+  }, 250);
+}
+$('inJibun').addEventListener('change', scheduleSegCheck);
+$('inLoc').addEventListener('change', scheduleSegCheck);
+$('inLoc').addEventListener('blur', scheduleSegCheck);
 
 let pickCtx = null;
+const albumMode = () => document.querySelector('input[name=src]:checked').value === 'album';
 function pick(ctx) {
   pickCtx = ctx;
   const p = $('picker');
   p.value = '';
-  const album = document.querySelector('input[name=src]:checked').value === 'album';
+  const album = ctx.album != null ? ctx.album : albumMode();
   if (album) p.removeAttribute('capture'); else p.setAttribute('capture', 'environment');
-  p.multiple = album && ctx.mode === 'new';
+  p.multiple = !!(album && ctx.multiple);
+  pickCtx.album = album;
   p.click();
 }
-document.querySelectorAll('.shot').forEach(b => b.onclick = () => {
+document.querySelectorAll('.shot').forEach(b => b.onclick = async () => {
+  clearTimeout(segTimer);
   let t;
   try { t = makeTarget(b.dataset.kind); } catch (e) { toast('✗ ' + esc(e.message), 'bad'); return; }
-  pick({ mode: 'new', t });
+  if (segKey(t) !== S.committed || S.needShotConfirm) {
+    if (!(await confirmSeg(t, 'shot'))) { $('inJibun').focus(); return; }
+    S.committed = segKey(t); S.needShotConfirm = false;
+  }
+  pick({ mode: 'new', t, multiple: t.isDoc });
 });
 $('picker').onchange = async () => {
   const files = Array.from($('picker').files || []);
   const ctx = pickCtx;
   if (!files.length || !ctx) return;
   if (ctx.mode === 'retake') return doRetake(ctx, files[0]);
-  busy(true);
-  try {
-    for (const f of files) {
-      const blob = await toJpeg(f);
-      await Q.put({ id: uid(), gubun: ctx.t.gubun, jibun: ctx.t.jibun, loc: ctx.t.loc, kind: ctx.t.kind, blob, at: Date.now(), status: 'wait' });
-    }
-    toast(`${files.length > 1 ? files.length + '장 ' : ''}${esc(ctx.t.kind)} 보관됨 · 전송 중…`);
-  } catch (e) { toast('✗ ' + esc(e.message), 'bad'); }
+  busy(true, '사진 준비 중…');
+  let blobs = [];
+  try { for (const f of files) blobs.push(await toJpeg(f)); } catch (e) { busy(false); toast('✗ ' + esc(e.message), 'bad'); return; }
   busy(false);
-  updateBar(); pump();
+  const t = ctx.t, origin = ctx.album ? 'album' : 'camera';
+  if (t.isDoc) {
+    if (blobs.length > 1) return openImport(t, blobs);
+    await addToQueue(t, blobs[0], { origin });
+    toast(`대기목록에 추가: ${esc(t.kind)} · ${esc(segLabel(t))}`);
+    return;
+  }
+  // 현장사진: 슬롯 키패드
+  const r = await slotPad({ t, blob: blobs[0], fresh: true });
+  if (r) { await addToQueue(t, blobs[0], { origin, slot: r.slot, review: r.review }); toast(`대기목록에 추가: ${esc(photoName(t.key, r.slot, r.review))}`); }
+  else {
+    if (origin === 'camera') await toBin(Object.assign({ id: uid(), gubun: t.gubun, jibun: t.jibun, loc: t.loc, kind: t.kind, blob: blobs[0], at: Date.now(), order: Date.now(), origin }, {}));
+    toast(origin === 'camera' ? '취소함 · 사진은 제거함에 7일간 보관됩니다' : '취소함');
+  }
 };
 
-/* ---------- 파일 목록 / 수정 ---------- */
-let listData = null, listTarget = null;
+/* ---------- 슬롯 키패드 ---------- */
+async function usedSlots(key, excludeId) {
+  const q = (await DB.all('q')).filter(x => x.id !== excludeId && !isDocKind(x.kind) && photoKey(x.gubun, x.jibun, x.loc) === key && x.slot && !x.review).map(x => x.slot);
+  let drive = null;
+  try { const r = await api('peek', { keys: [key] }, 8000); drive = r.photos[key] || []; S.peek.photos[key] = drive; }
+  catch (e) { if (e instanceof AuthError) throw e; }
+  return { q, drive };
+}
+/** 슬롯 고르기. 결과 {slot, review} 또는 null(취소) */
+function slotPad({ t, blob, imgUrl, current, excludeId, fresh, title }) {
+  return new Promise(async resolve => {
+    const url = imgUrl || (blob ? URL.createObjectURL(blob) : '');
+    let sel = current || 0, used = { q: [], drive: null };
+    const isUsed = n => used.q.includes(n) || (used.drive || []).includes(n);
+    const render = () => {
+      const pad = $('padGrid'); if (!pad) return;
+      pad.innerHTML = Array.from({ length: SLOTS }, (_, i) => i + 1).map(n => {
+        const u = used.q.includes(n) ? '대기중' : (used.drive || []).includes(n) ? '사용중' : '';
+        return `<button data-n="${n}" class="${u ? 'used' : ''} ${n === sel ? 'sel' : ''}">${n}${u ? `<small>${u}</small>` : ''}</button>`;
+      }).join('');
+      pad.querySelectorAll('button').forEach(b => b.onclick = () => { sel = +b.dataset.n; render(); });
+      $('padName').innerHTML = sel ? esc(photoName(t.key, sel, isUsed(sel))) + (isUsed(sel) ? '<br><span class="e" style="font-size:13px">⚠ 슬롯 ' + sel + ' 중복 — 저장하면 (검토) 이름으로 저장됩니다</span>' : '') : '<span style="color:var(--faint)">슬롯 번호를 누르세요</span>';
+      $('padSave').disabled = !sel;
+    };
+    openPanel(`<h2>${esc(title || (t.kind + ' 사진 슬롯 지정'))}</h2>
+      ${url ? `<img class="padimg" id="padImg" src="${url}" alt="">` : ''}
+      <div style="font-size:13px;color:var(--sub);margin-top:8px;text-align:center">${esc(segLabel(t))} · ${esc(t.kind)}</div>
+      <div class="fname" id="padName"></div>
+      <div class="pad" id="padGrid"></div>
+      <div class="note" id="padInfo">드라이브 확인 중…</div>
+      <div class="acts"><button class="btn" id="padCancel">취소</button><button class="btn primary" id="padSave" disabled>저장</button></div>`,
+      { onClose: () => { if (!imgUrl && url) URL.revokeObjectURL(url); } });
+    modalResolve = resolve;
+    render();
+    if ($('padImg')) $('padImg').onclick = () => openViewer([{ url, name: t.kind }], 0, 'single');
+    $('padCancel').onclick = async () => {
+      if (fresh && !(await askInline('이 사진을 저장하지 않을까요?'))) return;
+      modalResolve = null; closeModal(); resolve(null);
+    };
+    $('padSave').onclick = async () => {
+      if (!sel) return;
+      let review = false;
+      if (isUsed(sel)) {
+        if (!(await askInline(`슬롯 ${sel}번이 중복되었습니다.<br>그래도 저장하면 <b>${esc(photoName(t.key, sel, true))}</b> 이름으로 저장됩니다.`, '검토로 저장', '다시 선택'))) return;
+        review = true;
+      }
+      modalResolve = null; closeModal(); resolve({ slot: sel, review });
+    };
+    try { used = await usedSlots(t.key, excludeId); } catch (e) { if (e instanceof AuthError) { closeModal(); return logout(e.message); } }
+    if (!$('padGrid')) return;
+    $('padInfo').innerHTML = used.drive ? '회색 번호는 이미 사용 중입니다 (드라이브 + 대기목록)' : '<span class="e">인터넷 연결 안 됨</span> — 대기목록 안의 중복만 확인합니다. 업로드할 때 다시 확인합니다.';
+    render();
+  });
+}
+/** 패널 안에 겹쳐 띄우는 간단 확인창 (키패드 위) */
+function askInline(html, yes, no) {
+  return new Promise(res => {
+    const box = document.createElement('div');
+    box.className = 'modal on center'; box.style.zIndex = 59;
+    box.innerHTML = `<div class="panel dlg"><p>${html}</p><div class="acts"><button class="btn" data-v="0">${esc(no || '아니오')}</button><button class="btn primary" data-v="1">${esc(yes || '예')}</button></div></div>`;
+    document.body.appendChild(box);
+    box.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { box.remove(); res(b.dataset.v === '1'); });
+  });
+}
+
+/* ---------- 앨범에서 서류 여러 장: 가져오기(체크 순서 = 번호 순서) ---------- */
+const IMP = { t: null, items: [], checked: [], mode: false };
+function openImport(t, blobs) {
+  IMP.t = t; IMP.mode = false; IMP.checked = [];
+  IMP.items = blobs.map(b => ({ id: uid(), blob: b, url: URL.createObjectURL(b) }));
+  $('impTitle').textContent = `${segLabel(t)} · ${t.kind} ${blobs.length}장`;
+  show('vImport'); renderImport();
+}
+function closeImport() { IMP.items.forEach(x => URL.revokeObjectURL(x.url)); IMP.items = []; IMP.checked = []; show('vMain'); }
+function renderImport() {
+  const g = $('impGrid');
+  g.classList.toggle('mode', IMP.mode);
+  $('impHint').innerHTML = IMP.mode ? `<b>체크 모드</b> · 누르는 순서대로 ${esc(IMP.t.kind)} 1, 2, 3… 번호가 붙습니다. 다시 누르면 해제.` : '사진을 <b>한 번 누르면 크게 보기</b>, <b>길게 누르면 체크 모드</b>가 됩니다. 체크한 순서대로 번호가 붙고, 체크한 사진만 추가됩니다.';
+  g.innerHTML = IMP.items.map((x, i) => { const k = IMP.checked.indexOf(x.id); return `<div class="c ${k >= 0 ? 'on' : ''}" data-i="${i}"><img src="${x.url}" alt="">${IMP.mode ? `<span class="b">${k >= 0 ? k + 1 : ''}</span>` : ''}</div>`; }).join('');
+  g.querySelectorAll('.c').forEach(c => bindPress(c, () => {
+    const x = IMP.items[+c.dataset.i];
+    if (IMP.mode) toggleCheck(x.id); else openViewer(IMP.items.map(y => ({ url: y.url, name: IMP.t.kind })), +c.dataset.i, 'single');
+  }, () => { const x = IMP.items[+c.dataset.i]; IMP.mode = true; if (!IMP.checked.includes(x.id)) IMP.checked.push(x.id); renderImport(); if (navigator.vibrate) navigator.vibrate(30); }));
+  setDock(`<button class="btn" id="impCancel">취소</button><button class="btn primary" id="impAdd" ${IMP.checked.length ? '' : 'disabled'}>체크한 ${IMP.checked.length}장 추가</button>`);
+  $('impCancel').onclick = async () => { if (await ask({ title: '가져오기 취소', html: '<p>대기목록에 추가하지 않고 돌아갈까요? (앨범의 원본은 그대로 있습니다)</p>', buttons: [{ label: '계속', value: false }, { label: '취소하기', value: true, cls: 'danger' }] })) closeImport(); };
+  $('impAdd').onclick = async () => {
+    const base = Date.now();
+    for (let i = 0; i < IMP.checked.length; i++) {
+      const x = IMP.items.find(y => y.id === IMP.checked[i]);
+      await addToQueue(IMP.t, x.blob, { origin: 'album', order: base + i, at: base + i });
+    }
+    toast(`${IMP.checked.length}장을 대기목록에 추가했습니다`);
+    closeImport();
+  };
+}
+function toggleCheck(id) {
+  const k = IMP.checked.indexOf(id);
+  if (k >= 0) IMP.checked.splice(k, 1); else IMP.checked.push(id);
+  renderImport();
+}
+/** 짧게 누르기 / 길게 누르기(0.5초) 구분 */
+function bindPress(el, onTap, onLong) {
+  let tm = null, long = false, sx = 0, sy = 0;
+  el.addEventListener('pointerdown', e => { long = false; sx = e.clientX; sy = e.clientY; tm = setTimeout(() => { long = true; tm = null; onLong(); }, 500); });
+  el.addEventListener('pointermove', e => { if (tm && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) { clearTimeout(tm); tm = null; } });
+  el.addEventListener('pointerup', () => { if (tm) { clearTimeout(tm); tm = null; if (!long) onTap(); } });
+  el.addEventListener('pointercancel', () => { clearTimeout(tm); tm = null; });
+  el.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+/* ---------- 대기목록 ---------- */
+async function fetchPeek(items) {
+  const docs = {}, keys = {};
+  items.forEach(it => { if (isDocKind(it.kind)) docs[docGk(it)] = { gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind }; else keys[photoKey(it.gubun, it.jibun, it.loc)] = 1; });
+  try {
+    const r = await api('peek', { docs: Object.values(docs), keys: Object.keys(keys) }, 10000);
+    Object.assign(S.peek.docs, r.docs); Object.assign(S.peek.photos, r.photos); S.peekOk = true;
+  } catch (e) { if (e instanceof AuthError) throw e; S.peekOk = false; }
+}
+/** 대기 항목별 예상 파일명 */
+function planNames(items) {
+  const res = {}, groups = {};
+  items.filter(x => isDocKind(x.kind)).forEach(x => (groups[docGk(x)] = groups[docGk(x)] || []).push(x));
+  Object.keys(groups).forEach(gk => {
+    const known = S.peekOk && S.peek.docs[gk] !== undefined;
+    const base = known ? S.peek.docs[gk] : 0;
+    groups[gk].sort((a, b) => a.order - b.order).forEach((x, i) => (res[x.id] = { name: docName(x.jibun, x.loc, x.kind, base + i + 1), tentative: !known, base }));
+  });
+  items.filter(x => !isDocKind(x.kind)).forEach(x => {
+    const key = photoKey(x.gubun, x.jibun, x.loc);
+    if (!x.slot) { res[x.id] = { name: `${key}-사-?.jpg`, warn: '슬롯 미지정 — 정보 수정에서 지정하세요' }; return; }
+    const qd = items.some(y => y !== x && !isDocKind(y.kind) && photoKey(y.gubun, y.jibun, y.loc) === key && y.slot === x.slot && !y.review);
+    const dd = (S.peek.photos[key] || []).includes(x.slot);
+    res[x.id] = { name: photoName(key, x.slot, x.review), warn: (!x.review && (dd || qd)) ? `슬롯 ${x.slot} 중복 — 업로드 때 확인합니다` : (x.review ? '중복 슬롯 → (검토)로 저장 예정' : ''), tentative: !S.peekOk };
+  });
+  return res;
+}
+/** 화면에 보이는 순서대로 정렬된 묶음 */
+function arrange(items) {
+  const segs = [];
+  const byKey = {};
+  items.slice().sort((a, b) => a.at - b.at).forEach(x => { const k = segKey(x); if (!byKey[k]) { byKey[k] = { seg: x, docs: {}, photos: [] }; segs.push(byKey[k]); } });
+  items.forEach(x => { const s = byKey[segKey(x)]; if (isDocKind(x.kind)) (s.docs[x.kind] = s.docs[x.kind] || []).push(x); else s.photos.push(x); });
+  segs.forEach(s => { Object.values(s.docs).forEach(g => g.sort((a, b) => a.order - b.order)); s.photos.sort((a, b) => (a.slot || 99) - (b.slot || 99) || a.at - b.at); });
+  const flat = [];
+  segs.forEach(s => { DOC_KINDS.forEach(k => (s.docs[k] || []).forEach(x => flat.push(x))); s.photos.forEach(x => flat.push(x)); });
+  return { segs, flat };
+}
+let QV = { items: [], flat: [], names: {}, urls: {} };
+async function openQueue() {
+  Q.dirty = false;
+  show('vQueue');
+  await renderQueue();
+  try { await fetchPeek(QV.items); } catch (e) { if (e instanceof AuthError) return logout(e.message); }
+  if (curView === 'vQueue' && !Q.dirty) renderQueue();
+}
+function thumbUrl(it) { if (!QV.urls[it.id]) QV.urls[it.id] = URL.createObjectURL(it.blob); return QV.urls[it.id]; }
+async function renderQueue() {
+  const items = await DB.all('q');
+  // 사라진 항목의 미리보기 URL 정리
+  Object.keys(QV.urls).forEach(id => { if (!items.some(x => x.id === id)) { URL.revokeObjectURL(QV.urls[id]); delete QV.urls[id]; } });
+  const { segs, flat } = arrange(items);
+  const names = planNames(items);
+  QV = Object.assign(QV, { items, flat, names });
+  $('qTitle').textContent = `업로드 대기목록 ${items.length}건`;
+  $('qNote').innerHTML = !items.length ? '' : (S.peekOk ? '<div class="note">파일명은 업로드 규칙에 따라 정해집니다. 서류는 오른쪽 <b>≡</b>를 끌어서 순서를 바꿀 수 있습니다.</div>'
+    : '<div class="note w">인터넷 연결 전이라 서류 번호는 <b>(예정)</b>입니다. 드라이브에 같은 서류가 있으면 그 다음 번호로 저장됩니다.</div>');
+  if (!items.length) { $('qBody').innerHTML = '<p class="empty">대기 중인 사진이 없습니다.</p>'; setDock(''); return; }
+  const row = (x, handle) => {
+    const n = names[x.id] || {};
+    const st = x.status === 'fail' ? `<div class="st f">실패: ${esc(x.error || '')}</div>` : n.warn ? `<div class="st w">⚠ ${esc(n.warn)}</div>` : `<div class="st">${esc(x.kind)}${!isDocKind(x.kind) && x.loc ? ' · ' + esc(x.loc) : ''} · ${new Date(x.at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</div>`;
+    return `<div class="rw" data-id="${x.id}"><img src="${thumbUrl(x)}" alt=""><div class="x"><div class="nm">${esc(n.name)}${n.tentative && isDocKind(x.kind) ? '<span class="tag t">예정</span>' : ''}</div>${st}</div>${handle ? '<div class="hdl" aria-label="끌어서 순서 변경">≡</div>' : ''}</div>`;
+  };
+  $('qBody').innerHTML = segs.map(s => `<div class="sect"><h4>${esc(segLabel(s.seg))}</h4>` +
+    DOC_KINDS.filter(k => s.docs[k]).map(k => { const g = s.docs[k]; const gk = docGk(g[0]); return `<div class="glabel">${esc(k)} ${g.length}장</div><div class="rows" data-gk="${esc(gk)}" data-base="${names[g[0].id].base || 0}">${g.map(x => row(x, g.length > 1)).join('')}</div>`; }).join('') +
+    (s.photos.length ? `<div class="glabel">현장사진 ${s.photos.length}장</div><div class="rows">${s.photos.map(x => row(x, false)).join('')}</div>` : '') + '</div>').join('');
+  $('qBody').querySelectorAll('.rw').forEach(r => r.addEventListener('click', e => {
+    if (e.target.closest('.hdl') || Q.dirty) return;
+    const i = QV.flat.findIndex(x => x.id === r.dataset.id);
+    openQueueViewer(i);
+  }));
+  enableDrag($('qBody'), grp => {
+    Q.dirty = true;
+    const base = +grp.dataset.base || 0;
+    grp.querySelectorAll('.rw').forEach((r, i) => { const it = QV.items.find(x => x.id === r.dataset.id); r.querySelector('.nm').firstChild.textContent = docName(it.jibun, it.loc, it.kind, base + i + 1); });
+    queueDock();
+  });
+  queueDock();
+}
+function queueDock() {
+  if (curView !== 'vQueue') return;
+  if (Q.dirty) {
+    setDock('<button class="btn" id="rdCancel">취소</button><button class="btn primary" id="rdDone">변경완료</button>');
+    $('rdCancel').onclick = () => { Q.dirty = false; renderQueue(); };
+    $('rdDone').onclick = async () => {
+      if (!(await ask({ title: '순서 변경', html: '<p>바꾼 순서대로 번호를 다시 매길까요?</p>', buttons: [{ label: '취소', value: false }, { label: '변경완료', value: true, cls: 'primary' }] }))) return;
+      for (const grp of $('qBody').querySelectorAll('.rows[data-gk]')) {
+        const ids = [...grp.querySelectorAll('.rw')].map(r => r.dataset.id);
+        const orders = ids.map(id => QV.items.find(x => x.id === id).order).sort((a, b) => a - b);
+        for (let i = 0; i < ids.length; i++) { const it = QV.items.find(x => x.id === ids[i]); if (it.order !== orders[i]) { it.order = orders[i]; await DB.put('q', it); } }
+      }
+      Q.dirty = false; toast('순서를 바꿨습니다'); renderQueue();
+    };
+  } else if (QV.items.length) {
+    setDock(`<button class="btn go" id="upAll">전체 업로드 (${QV.items.length}건)</button>`);
+    $('upAll').onclick = uploadAll;
+  } else setDock('');
+}
+/** ≡ 손잡이로 같은 묶음 안에서 끌어서 옮기기 */
+function enableDrag(root, onChange) {
+  root.querySelectorAll('.hdl').forEach(h => h.addEventListener('pointerdown', e => {
+    const row = h.closest('.rw'), grp = row.parentElement;
+    e.preventDefault(); e.stopPropagation();
+    try { h.setPointerCapture(e.pointerId); } catch (x) {}
+    row.classList.add('dragging');
+    let moved = false;
+    const move = ev => {
+      const y = ev.clientY;
+      const sibs = [...grp.children];
+      const i = sibs.indexOf(row), prev = sibs[i - 1], next = sibs[i + 1];
+      if (next) { const r = next.getBoundingClientRect(); if (y > r.top + r.height / 2) { grp.insertBefore(next, row); moved = true; onChange(grp); return; } }
+      if (prev) { const r = prev.getBoundingClientRect(); if (y < r.top + r.height / 2) { grp.insertBefore(prev, row.nextSibling); moved = true; onChange(grp); } }  // 끄는 행 자체는 옮기지 않아야 손가락 추적이 유지됨
+    };
+    const up = () => { row.classList.remove('dragging'); h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up); h.removeEventListener('pointercancel', up); };
+    h.addEventListener('pointermove', move); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
+  }));
+}
+function openQueueViewer(i) {
+  const list = QV.flat.map(x => ({ url: thumbUrl(x), name: (QV.names[x.id] || {}).name, id: x.id }));
+  openViewer(list, i, 'queue');
+}
+async function editQueueItem(id) {
+  const it = await DB.get('q', id);
+  if (!it) return false;
+  const r = await infoForm({ gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind, slot: it.slot }, { excludeId: it.id, imgUrl: thumbUrl(it) });
+  if (!r) return false;
+  const docChanged = isDocKind(r.kind) && (docGk(r) !== docGk(it) || r.gubun !== it.gubun);
+  Object.assign(it, { gubun: r.gubun, jibun: r.jibun, loc: r.loc, kind: r.kind, slot: isDocKind(r.kind) ? undefined : r.slot, review: isDocKind(r.kind) ? false : r.review, status: 'wait', error: '' });
+  if (docChanged) it.order = Date.now();
+  await DB.put('q', it);
+  toast('정보를 수정했습니다');
+  return true;
+}
+async function removeQueueItem(id) {
+  const it = await DB.get('q', id);
+  if (!it) return false;
+  if (!(await ask({ title: '목록에서 제거', html: `<p><b>${esc((QV.names[id] || {}).name || it.kind)}</b></p><p>대기목록에서 제거할까요? 앱의 <b>제거함</b>에 ${BIN_DAYS}일간 보관되어 되살릴 수 있습니다.${it.origin === 'album' ? ' (앨범의 원본은 그대로 있습니다)' : ''}</p>`, buttons: [{ label: '취소', value: false }, { label: '제거', value: true, cls: 'danger' }] }))) return false;
+  await toBin(it);
+  toast('제거함으로 옮겼습니다');
+  updateBar();
+  return true;
+}
+
+/* ---------- 정보 수정 양식 (대기목록·드라이브 공용) ---------- */
+function infoForm(cur, opt) {
+  opt = opt || {};
+  return new Promise(resolve => {
+    const kinds = DOC_KINDS.concat(PHOTO_KINDS);
+    openPanel(`<h2>정보 수정</h2>${opt.imgUrl ? `<img class="padimg" src="${opt.imgUrl}" alt="" style="height:22vh">` : ''}
+      <div class="two" style="margin-top:10px"><label class="fld"><span>건물</span><select id="mG"><option value="토건">토지건물</option><option value="구분">구분건물</option></select></label>
+      <label class="fld"><span>종류</span><select id="mK" style="font-size:16px">${kinds.map(k => `<option>${k}</option>`).join('')}</select></label></div>
+      <div class="two" style="margin-top:10px"><label class="fld"><span>지번</span><input id="mJ" inputmode="numeric"></label><label class="fld"><span>층 / 호</span><input id="mL"></label></div>
+      <div id="mSlotWrap"><div class="glabel" style="margin-top:12px">슬롯 번호</div><div class="pad" id="mPad"></div></div>
+      <div class="preview" id="mP"></div>
+      <div class="acts"><button class="btn" data-close>취소</button><button class="btn primary" id="mSave">변경 저장</button></div>`);
+    modalResolve = resolve;
+    $('mG').value = cur.gubun || '토건'; $('mK').value = cur.kind; $('mJ').value = cur.jibun || ''; $('mL').value = cur.loc || '';
+    let slot = cur.slot || 0, used = { q: [], drive: null }, usedKey = '';
+    const val = () => makeTarget($('mK').value, { gubun: $('mG').value, jibun: $('mJ').value, loc: $('mL').value });
+    const isUsed = n => used.q.includes(n) || (used.drive || []).includes(n);
+    const refreshUsed = async t => {
+      if (!t || t.isDoc || t.key === usedKey) return;
+      usedKey = t.key;
+      try { used = await usedSlots(t.key, opt.excludeId); } catch (e) { used = { q: [], drive: null }; }
+      if (opt.selfKey === t.key && opt.selfSlot) { used.drive = (used.drive || []).filter(n => n !== opt.selfSlot); }
+      pv();
+    };
+    const pv = () => {
+      let t = null;
+      try { t = val(); } catch (e) { $('mP').innerHTML = `<span class="e">${esc(e.message)}</span>`; }
+      const photo = !isDocKind($('mK').value);
+      $('mSlotWrap').style.display = photo ? '' : 'none';
+      $('mPad').innerHTML = Array.from({ length: SLOTS }, (_, i) => i + 1).map(n => `<button data-n="${n}" class="${isUsed(n) ? 'used' : ''} ${n === slot ? 'sel' : ''}">${n}</button>`).join('');
+      $('mPad').querySelectorAll('button').forEach(b => b.onclick = () => { slot = +b.dataset.n; pv(); });
+      if (!t) return;
+      if (photo) { refreshUsed(t); $('mP').innerHTML = slot ? '새 이름: <b>' + esc(photoName(t.key, slot, isUsed(slot))) + '</b>' + (isUsed(slot) ? '<br><span class="e">⚠ 슬롯 중복 — (검토)로 저장됩니다</span>' : '') : '<span class="e">슬롯 번호를 고르세요</span>'; }
+      else $('mP').innerHTML = '새 이름: <b>' + esc(`${DONG} ${t.jibun} ${t.loc} ${t.kind}`) + 'N.jpg</b> <small>(그 묶음의 마지막 번호 다음)</small>';
+    };
+    ['mG', 'mK', 'mJ', 'mL'].forEach(id => $(id).addEventListener('input', pv)); pv();
+    $('mSave').onclick = async () => {
+      let t; try { t = val(); } catch (e) { return; }
+      let review = false;
+      if (!t.isDoc) {
+        if (!slot) return;
+        if (isUsed(slot)) {
+          if (!(await askInline(`슬롯 ${slot}번이 중복되었습니다.<br>그래도 저장하면 <b>(검토)</b> 이름으로 저장됩니다.`, '검토로 저장', '다시 선택'))) return;
+          review = true;
+        }
+      }
+      modalResolve = null; closeModal();
+      resolve({ gubun: t.gubun, jibun: t.jibun, loc: t.loc, kind: t.kind, slot: t.isDoc ? 0 : slot, review });
+    };
+  });
+}
+
+/* ---------- 전체 업로드 ---------- */
+async function uploadAll() {
+  const items = await DB.all('q');
+  if (!items.length) return;
+  const { segs, flat } = arrange(items);
+  const summary = segs.map(s => { const d = Object.values(s.docs).reduce((a, g) => a + g.length, 0); return `<li><b>${esc(segLabel(s.seg))}</b> — 서류 ${d}장, 사진 ${s.photos.length}장</li>`; }).join('');
+  if (!(await ask({ title: '업로드 전 확인', html: `<p style="font-size:17px;font-weight:700">지번과 층·호 정보를 확인하세요</p><ul>${summary}</ul>`, buttons: [{ label: '취소', value: false }, { label: '업로드', value: true, cls: 'go' }] }))) return;
+  if (!navigator.onLine) { toast('✗ 인터넷에 연결되지 않았습니다', 'bad'); return; }
+  const saved = [];
+  let fail = 0, held = 0, stop = false, n = 0;
+  const total = flat.length;
+  const send = (it, extra) => api('upload', Object.assign({ gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind, cid: it.id }, extra), 120000);
+  try {
+    for (const s of segs) {
+      if (stop) break;
+      // 서류: 묶음 순서대로. 하나 실패하면 그 묶음의 나머지는 멈춤
+      for (const k of DOC_KINDS) {
+        const g = s.docs[k] || [];
+        for (let i = 0; i < g.length && !stop; i++) {
+          const it = g[i];
+          busy(true, `업로드 중… ${++n} / ${total}`);
+          try {
+            const r = await send(it, { data: await blobToB64(it.blob) });
+            await DB.del('q', it.id); saved.push(r.name);
+          } catch (e) {
+            if (e instanceof AuthError) throw e;
+            if (e instanceof NetError) { stop = true; break; }
+            it.status = 'fail'; it.error = e.message; await DB.put('q', it); fail++;
+            held += g.length - i - 1; n += g.length - i - 1;
+            break;
+          }
+        }
+      }
+      // 사진: 슬롯 지정. 드라이브와 중복이면 선택
+      for (const it of s.photos) {
+        if (stop) break;
+        busy(true, `업로드 중… ${++n} / ${total}`);
+        if (!it.slot) { held++; continue; }
+        let force = !!it.review, done = false;
+        while (!done) {
+          let r;
+          try { r = await send(it, { slot: it.slot, force, data: await blobToB64(it.blob) }); }
+          catch (e) {
+            if (e instanceof AuthError) throw e;
+            if (e instanceof NetError) { stop = true; break; }
+            it.status = 'fail'; it.error = e.message; await DB.put('q', it); fail++; break;
+          }
+          if (!r.dup) { await DB.del('q', it.id); saved.push(r.name); done = true; break; }
+          busy(false);
+          const key = photoKey(it.gubun, it.jibun, it.loc);
+          const c = await ask({ title: '슬롯 중복', html: `<img class="padimg" src="${thumbUrl(it)}" alt="" style="height:24vh"><p>드라이브에 이미 <b>${esc(key)}-사-${it.slot}</b>이(가) 있습니다.</p>`,
+            buttons: [{ label: '건너뛰기', value: 'skip' }, { label: '슬롯 다시 지정', value: 'slot' }, { label: '검토로 저장', value: 'review', cls: 'warn' }] });
+          if (c === 'review') { force = true; it.review = true; await DB.put('q', it); }
+          else if (c === 'slot') {
+            const t = makeTarget(it.kind, it);
+            const p = await slotPad({ t, imgUrl: thumbUrl(it), current: it.slot, excludeId: it.id, title: '슬롯 다시 지정' });
+            if (!p) { held++; break; }
+            it.slot = p.slot; it.review = p.review; force = p.review; await DB.put('q', it);
+          } else { held++; break; }
+          busy(true, `업로드 중… ${n} / ${total}`);
+        }
+      }
+    }
+  } catch (e) { busy(false); return logout(e.message); }
+  busy(false);
+  const left = (await DB.all('q')).length;
+  await ask({ title: left ? '업로드 일부 완료' : '업로드 완료', html:
+    `<p>저장 <b>${saved.length}건</b>${left ? ` · 남음 <b>${left}건</b>` : ''}</p>` +
+    (stop ? '<p class="note w">인터넷 연결이 끊겨 멈췄습니다. 연결 후 다시 [전체 업로드]를 누르세요.</p>' : '') +
+    (fail ? `<p class="note w">실패 ${fail}건${held ? `, 같은 묶음에서 멈춘 ${held}건` : ''}은 대기목록에 남아 있습니다.</p>` : (held ? `<p class="note">건너뛴 ${held}건은 대기목록에 남아 있습니다.</p>` : '')) +
+    (saved.length ? `<ul style="max-height:30vh;overflow:auto">${saved.slice(0, 40).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''),
+    buttons: [{ label: '확인', value: true, cls: 'primary' }] });
+  updateBar();
+  if (left) openQueue(); else show('vMain');
+}
+
+/* ---------- 제거함 ---------- */
+async function openBin() {
+  const all = (await DB.all('bin')).sort((a, b) => b.removedAt - a.removedAt);
+  const urls = [];
+  openPanel(`<h2>제거함 (${all.length}건)</h2><p class="note">대기목록에서 제거한 사진을 ${BIN_DAYS}일간 보관합니다. 이 폰에만 있습니다.</p>` + (all.length ? all.map(x => {
+    const u = URL.createObjectURL(x.blob); urls.push(u);
+    const days = Math.max(0, BIN_DAYS - Math.floor((Date.now() - x.removedAt) / 864e5));
+    return `<div class="rw" style="cursor:default"><img src="${u}" alt=""><div class="x"><div class="nm">${esc(segLabel(x))} · ${esc(x.kind)}${x.slot ? ' · 슬롯 ' + x.slot : ''}</div><div class="st">${days}일 후 자동 삭제</div></div>
+      <button class="btn sm" style="width:auto;padding:0 12px;margin:0" data-restore="${x.id}">되살리기</button></div>`;
+  }).join('') : '<p class="empty">비어 있습니다.</p>') + '<button class="btn sm" data-close>닫기</button>', { onClose: () => urls.forEach(URL.revokeObjectURL) });
+  $('panel').querySelectorAll('[data-restore]').forEach(b => b.onclick = async () => {
+    const x = await DB.get('bin', b.dataset.restore);
+    delete x.removedAt; x.status = 'wait';
+    await DB.put('q', x); await DB.del('bin', x.id);
+    toast('대기목록으로 되살렸습니다' + (!isDocKind(x.kind) && !x.slot ? ' · 슬롯을 지정하세요' : ''));
+    closeModal(); updateBar();
+    if (curView === 'vQueue') renderQueue();
+  });
+}
+$('btnBin').onclick = openBin;
+
+/* ---------- 전체화면 보기 (확대·좌우 넘기기) ---------- */
+const V = { list: [], i: 0, mode: '', s: 1, x: 0, y: 0, ptrs: new Map(), start: null, lastTap: 0, swipe: null };
+function openViewer(list, i, mode) {
+  V.list = list; V.i = Math.max(0, Math.min(i, list.length - 1)); V.mode = mode;
+  $('vw').style.zIndex = modalOpen() ? 58 : 50;
+  $('vw').classList.add('on');
+  vwShow();
+}
+function vwClose() { $('vw').classList.remove('on'); $('vwImg').src = ''; }
+function vwShow() {
+  const it = V.list[V.i];
+  if (!it) { vwClose(); return; }
+  V.s = 1; V.x = 0; V.y = 0; vwApply();
+  $('vwImg').src = it.url;
+  $('vwName').textContent = it.name || '';
+  $('vwCount').textContent = V.list.length > 1 ? `${V.i + 1} / ${V.list.length}` : '';
+  $('vwPrev').style.display = V.i > 0 ? '' : 'none';
+  $('vwNext').style.display = V.i < V.list.length - 1 ? '' : 'none';
+  const bot = $('vwBot');
+  if (V.mode === 'queue') {
+    const qit = QV.flat.find(x => x.id === it.id);
+    bot.innerHTML = `<button id="vwEdit">정보 수정</button>${qit && isDocKind(qit.kind) ? '<button id="vwOrder">순서 바꾸기</button>' : ''}<button class="d" id="vwDel">제거</button>`;
+    bot.style.display = '';
+    $('vwEdit').onclick = async () => { if (await editQueueItem(it.id)) { await renderQueue(); vwRefreshQueue(it.id); } };
+    if ($('vwOrder')) $('vwOrder').onclick = () => { vwClose(); toast('목록에서 오른쪽 ≡ 를 끌어 순서를 바꾼 뒤 [변경완료]를 누르세요'); };
+    $('vwDel').onclick = async () => { if (await removeQueueItem(it.id)) { await renderQueue(); vwRefreshQueue(null); } };
+  } else { bot.innerHTML = ''; bot.style.display = 'none'; }
+}
+function vwRefreshQueue(keepId) {
+  const list = QV.flat.map(x => ({ url: thumbUrl(x), name: (QV.names[x.id] || {}).name, id: x.id }));
+  if (!list.length) { vwClose(); return; }
+  let i = keepId ? list.findIndex(x => x.id === keepId) : V.i;
+  if (i < 0) i = V.i;
+  V.list = list; V.i = Math.min(i, list.length - 1); vwShow();
+}
+function vwApply() { $('vwImg').style.transform = `translate(${V.x}px,${V.y}px) scale(${V.s})`; }
+function vwGo(d) { const j = V.i + d; if (j >= 0 && j < V.list.length) { V.i = j; vwShow(); } }
+$('vwClose').onclick = vwClose;
+$('vwPrev').onclick = e => { e.stopPropagation(); vwGo(-1); };
+$('vwNext').onclick = e => { e.stopPropagation(); vwGo(1); };
+document.addEventListener('keydown', e => { if (!$('vw').classList.contains('on')) return; if (e.key === 'ArrowLeft') vwGo(-1); if (e.key === 'ArrowRight') vwGo(1); if (e.key === 'Escape') vwClose(); });
+(function () {
+  const st = $('vwStage'), img = $('vwImg');
+  // 확대 기준점 계산용: 이미지 원래 위치(변형 전)
+  const base = () => { const r = st.getBoundingClientRect(); const w = img.offsetWidth, h = img.offsetHeight; return { l: r.left + (r.width - w) / 2, t: r.top + (r.height - h) / 2, w, h }; };
+  const zoomAt = (ns, cx, cy) => {
+    ns = Math.max(1, Math.min(5, ns));
+    const b = base();
+    const px = cx - b.l, py = cy - b.t;            // 화면 좌표 → 이미지 기준
+    V.x = px - (px - V.x) * (ns / V.s); V.y = py - (py - V.y) * (ns / V.s); V.s = ns;
+    if (V.s === 1) { V.x = 0; V.y = 0; }
+    vwApply();
+  };
+  st.addEventListener('pointerdown', e => {
+    if (e.target.closest('.nav')) return;
+    st.setPointerCapture(e.pointerId);
+    V.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (V.ptrs.size === 2) {
+      const [a, b] = [...V.ptrs.values()];
+      V.start = { d: Math.hypot(a.x - b.x, a.y - b.y), s: V.s, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 };
+      V.swipe = null;
+    } else if (V.ptrs.size === 1) {
+      V.swipe = { x: e.clientX, y: e.clientY, ox: V.x, oy: V.y, t: Date.now() };
+    }
+  });
+  st.addEventListener('pointermove', e => {
+    if (!V.ptrs.has(e.pointerId)) return;
+    V.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (V.ptrs.size === 2 && V.start) {
+      const [a, b] = [...V.ptrs.values()];
+      zoomAt(V.start.s * Math.hypot(a.x - b.x, a.y - b.y) / V.start.d, V.start.cx, V.start.cy);
+      V.start.s = V.s; V.start.d = Math.hypot(a.x - b.x, a.y - b.y);
+    } else if (V.ptrs.size === 1 && V.swipe && V.s > 1) {
+      V.x = V.swipe.ox + (e.clientX - V.swipe.x); V.y = V.swipe.oy + (e.clientY - V.swipe.y); vwApply();
+    }
+  });
+  const end = e => {
+    if (!V.ptrs.has(e.pointerId)) return;
+    V.ptrs.delete(e.pointerId);
+    if (V.ptrs.size < 2) V.start = null;
+    if (V.ptrs.size === 0 && V.swipe) {
+      const dx = e.clientX - V.swipe.x, dy = e.clientY - V.swipe.y;
+      if (V.s === 1 && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) vwGo(dx < 0 ? 1 : -1);
+      else if (Math.hypot(dx, dy) < 10 && Date.now() - V.swipe.t < 300) {
+        const now = Date.now();
+        if (now - V.lastTap < 320) { zoomAt(V.s > 1 ? 1 : 2.5, e.clientX, e.clientY); V.lastTap = 0; }
+        else V.lastTap = now;
+      }
+      V.swipe = null;
+    }
+  };
+  st.addEventListener('pointerup', end);
+  st.addEventListener('pointercancel', end);
+  st.addEventListener('wheel', e => { e.preventDefault(); zoomAt(V.s * (e.deltaY < 0 ? 1.2 : 1 / 1.2), e.clientX, e.clientY); }, { passive: false });
+})();
+
+/* ---------- 업로드된 파일 보기 / 수정 ---------- */
+const F = { data: null, target: null, dirty: false };
 $('btnFiles').onclick = () => {
-  try { normJibun($('inJibun').value); } catch (e) { toast('✗ 지번을 먼저 입력하세요', 'bad'); return; }
+  try { readSeg(); } catch (e) { toast('✗ 지번과 층·호를 먼저 입력하세요', 'bad'); return; }
+  F.dirty = false;
   show('vFiles'); loadFiles();
 };
-$('btnBack').onclick = () => show('vMain');
-$('btnReload').onclick = () => loadFiles();
+$('btnReload').onclick = () => { F.dirty = false; loadFiles(); };
 $('onlyLoc').onchange = () => { LS.set('onlyLoc', $('onlyLoc').checked); loadFiles(); };
-
 async function loadFiles(quiet) {
-  let jibun, loc;
-  try { jibun = normJibun($('inJibun').value); loc = normLoc($('inLoc').value, S.gubun); } catch (e) { toast('✗ ' + esc(e.message), 'bad'); return; }
-  if (S.gubun === '구분' && !loc) { toast('✗ 구분건물은 호를 입력하세요', 'bad'); show('vMain'); return; }
-  listTarget = { gubun: S.gubun, jibun, loc };
-  $('filesTitle').textContent = `${DONG} ${jibun}${loc ? ' ' + loc : ''}`;
+  let seg; try { seg = readSeg(); } catch (e) { toast('✗ ' + esc(e.message), 'bad'); return; }
+  F.target = seg;
+  $('filesTitle').textContent = segLabel(seg);
   if (!quiet) $('fileBody').innerHTML = '<p class="empty">불러오는 중…</p>';
   try {
-    listData = await api('list', { gubun: S.gubun, jibun, loc, onlyLoc: $('onlyLoc').checked });
+    F.data = await api('list', { gubun: seg.gubun, jibun: seg.jibun, loc: seg.loc, onlyLoc: $('onlyLoc').checked });
+    F.dirty = false;
     renderFiles();
   } catch (e) {
     if (e instanceof AuthError) return logout(e.message);
     $('fileBody').innerHTML = `<p class="err">불러오기 실패: ${esc(e.message)}</p>`;
   }
 }
-function cardHtml(f, i, over) {
-  const m = f.meta || {};
-  const when = m.at ? new Date(m.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '기존 파일';
-  const short = f.name.replace(/\.[^.]+$/, '').replace(DONG + ' ', '');
-  return `<button class="card${over ? ' over' : ''}" data-i="${i}"><div class="im" ${f.thumb ? `style="background-image:url('${f.thumb}')"` : ''}>${f.thumb ? '' : '🖼'}</div>
-    <div class="nm">${esc(short)}</div><div class="mt">${esc([m.by, m.kind === '내부' && m.loc ? m.loc : (m.kind === '외관' ? '외관' : ''), when].filter(Boolean).join(' · '))}${over ? ' · ⚠칸 초과' : ''}</div></button>`;
-}
+const DOC_RE = new RegExp(`^${DONG} (\\S+) (\\S+) (${DOC_KINDS.join('|')})(\\d+)\\.`);
 function renderFiles() {
-  const d = listData;
-  const all = d.docs.concat(d.photos);
-  d._all = all;
+  const d = F.data;
+  const groups = {}, other = [];
+  d.docs.forEach(f => { const m = f.name.match(DOC_RE); if (m) { const k = m[2] + ' ' + m[3]; (groups[k] = groups[k] || []).push(f); } else other.push(f); });
+  Object.values(groups).forEach(g => g.sort((a, b) => +a.name.match(DOC_RE)[4] - +b.name.match(DOC_RE)[4]));
+  const meta = f => { const m = f.meta || {}; return m.at ? `${m.by || ''} · ${new Date(m.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}` : '기존 파일'; };
+  const row = (f, handle) => `<div class="rw" data-id="${f.id}">${f.thumb ? `<img src="${f.thumb}" alt="">` : '<div class="ph">🖼</div>'}<div class="x"><div class="nm">${esc(f.name.replace(DONG + ' ', ''))}</div><div class="st">${esc(meta(f))}</div></div>${handle ? '<div class="hdl">≡</div>' : ''}</div>`;
+  const main = d.photos.filter(p => !p.review), rev = d.photos.filter(p => p.review);
+  const bySlot = {}; main.forEach(p => (bySlot[p.slot] = p));
+  const slotCard = n => { const p = bySlot[n]; return p ? `<button class="slot" data-id="${p.id}"><div class="im" ${p.thumb ? `style="background-image:url('${p.thumb}')"` : ''}></div><div class="nm">사-${n}</div><div class="mt">${esc((p.meta && p.meta.kind) || '')}${p.meta && p.meta.kind === '내부' && p.meta.loc ? ' · ' + esc(p.meta.loc) : ''}</div></button>` : `<div class="slot empty"><div class="im">빈 슬롯 ${n}</div><div class="nm" style="color:var(--faint)">사-${n}</div><div class="mt">&nbsp;</div></div>`; };
+  const extra = main.filter(p => p.slot > d.slots);
   $('fileBody').innerHTML =
-    `<h3><i style="background:var(--doc)"></i>서류 ${d.docs.length}건 <small style="font-weight:400">${esc(d.folder ? '03. 서류 / ' + d.folder : '폴더 아직 없음')}</small></h3>` +
-    (d.docs.length ? `<div class="list">${d.docs.map((f, i) => cardHtml(f, i)).join('')}</div>` : '<p class="empty">없음</p>') +
-    `<h3><i style="background:var(--pho)"></i>현장사진 ${d.photos.length} / ${d.slots}장 <small style="font-weight:400">02. 사진 / ${esc(d.key)}-사-N</small></h3>` +
-    (d.photos.length ? `<div class="list">${d.photos.map((f, i) => cardHtml(f, d.docs.length + i, i >= d.slots)).join('')}</div>` : '<p class="empty">없음</p>');
-  $('fileBody').querySelectorAll('.card').forEach(c => c.onclick = () => openDetail(all[+c.dataset.i]));
+    `<h3><i style="background:var(--doc)"></i>관련서류 ${d.docs.length}건 <small>${esc(d.folder ? '03. 서류 / ' + d.folder : '폴더 아직 없음')}</small></h3>` +
+    (d.docs.length ? '<div class="sect">' + Object.keys(groups).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true })).map(k => `<div class="glabel">${esc(k)} ${groups[k].length}장</div><div class="rows" data-group="${esc(k)}">${groups[k].map(f => row(f, groups[k].length > 1)).join('')}</div>`).join('') +
+      (other.length ? `<div class="glabel">기타 파일</div><div class="rows">${other.map(f => row(f, false)).join('')}</div>` : '') + '</div>' : '<p class="empty">없음</p>') +
+    `<h3><i style="background:var(--pho)"></i>현장사진 ${main.length} / ${d.slots}칸 <small>02. 사진 / ${esc(d.key)}-사-N</small></h3>` +
+    `<div class="slots">${Array.from({ length: d.slots }, (_, i) => slotCard(i + 1)).join('')}${extra.map(p => slotCard(p.slot)).join('')}</div>` +
+    (rev.length ? `<h3><i style="background:var(--warn)"></i>검토 필요 ${rev.length}건 <small>관리자가 드라이브에서 정리</small></h3><div class="sect"><div class="rows">${rev.map(f => row(f, false)).join('')}</div></div>` : '');
+  const all = d.docs.concat(d.photos);
+  $('fileBody').querySelectorAll('.rw[data-id], .slot[data-id]').forEach(c => c.addEventListener('click', e => {
+    if (e.target.closest('.hdl') || F.dirty) return;
+    openDetail(all.find(f => f.id === c.dataset.id));
+  }));
+  enableDrag($('fileBody'), () => { F.dirty = true; filesDock(); });
+  filesDock();
 }
-
+function filesDock() {
+  if (curView !== 'vFiles') return;
+  if (!F.dirty) { setDock(''); return; }
+  setDock('<button class="btn" id="frCancel">취소</button><button class="btn primary" id="frDone">변경완료</button>');
+  $('frCancel').onclick = () => { F.dirty = false; renderFiles(); };
+  $('frDone').onclick = async () => {
+    if (!(await ask({ title: '순서 변경', html: '<p>바꾼 순서대로 드라이브의 파일 번호를 다시 매길까요?</p>', buttons: [{ label: '취소', value: false }, { label: '변경완료', value: true, cls: 'primary' }] }))) return;
+    busy(true);
+    try {
+      let changed = 0;
+      for (const grp of $('fileBody').querySelectorAll('.rows[data-group]')) {
+        const ids = [...grp.querySelectorAll('.rw')].map(r => r.dataset.id);
+        const orig = F.data.docs.filter(f => ids.includes(f.id)).sort((a, b) => +a.name.match(DOC_RE)[4] - +b.name.match(DOC_RE)[4]).map(f => f.id);
+        if (ids.join() === orig.join()) continue;
+        changed += (await api('reorder', { ids })).changed;
+      }
+      toast(`순서를 바꿨습니다 (${changed}건)`);
+    } catch (e) { toast('✗ 순서 변경 실패: ' + esc(e.message), 'bad'); }
+    busy(false);
+    F.dirty = false; loadFiles(true);
+  };
+}
 async function openDetail(f) {
-  const isDoc = !/-사-\d+\./.test(f.name);
-  $('panel').innerHTML = `<h2>${esc(f.name)}</h2><img class="big" id="dImg" alt="" ${f.thumb ? `src="${f.thumb}"` : ''}>
+  const isPhoto = /-사-\d+/.test(f.name);
+  const review = !!f.review;
+  openPanel(`<h2>${esc(f.name)}</h2><img class="big" id="dImg" alt="" ${f.thumb ? `src="${f.thumb}"` : ''}>
     <p class="empty" id="dMsg">원본 불러오는 중…</p>
+    ${review ? '<p class="note w">검토 파일은 앱에서 보기만 할 수 있습니다. 정리는 관리자가 드라이브에서 합니다.</p><button class="btn sm" data-close>닫기</button>' : `
     <div class="acts">
       <button class="btn" id="dEdit" disabled>회전 · 자르기</button>
       <button class="btn" id="dRetake">다시 찍기</button>
       <button class="btn" id="dMove">정보 수정</button>
       <button class="btn danger" id="dDel">삭제</button>
-    </div><button class="btn sm" data-close>닫기</button>`;
-  openModal();
-  $('dRetake').onclick = () => { closeModal(); pick({ mode: 'retake', f }); };
-  $('dMove').onclick = () => openMove(f, isDoc);
-  $('dDel').onclick = () => doDelete(f);
+    </div><button class="btn sm" data-close>닫기</button>`}`);
+  let full = '';
+  $('dImg').onclick = () => openViewer([{ url: full || f.thumb, name: f.name }], 0, 'single');
+  if (!review) {
+    $('dRetake').onclick = () => { closeModal(); pick({ mode: 'retake', f }); };
+    $('dMove').onclick = () => driveMove(f, isPhoto);
+    $('dDel').onclick = () => doDelete(f, isPhoto);
+  }
   try {
     const r = await api('get', { id: f.id }, 120000);
-    const url = `data:${r.mime || 'image/jpeg'};base64,${r.data}`;
+    full = `data:${r.mime || 'image/jpeg'};base64,${r.data}`;
     if (!$('dImg')) return;
-    $('dImg').src = url; $('dMsg').textContent = '';
-    $('dEdit').disabled = false;
-    $('dEdit').onclick = () => { closeModal(); openEditor(f, url); };
+    $('dImg').src = full; $('dMsg').textContent = '사진을 누르면 크게 볼 수 있습니다';
+    if ($('dEdit')) { $('dEdit').disabled = false; $('dEdit').onclick = () => { closeModal(); openEditor(f, full); }; }
   } catch (e) { if ($('dMsg')) $('dMsg').textContent = '원본을 불러오지 못했습니다: ' + e.message; }
 }
-
-async function doDelete(f) {
-  if (!confirm(`${f.name}\n\n삭제할까요? 드라이브 휴지통으로 이동하고, 뒤 번호가 하나씩 당겨집니다.`)) return;
-  closeModal(); busy(true);
+async function doDelete(f, isPhoto) {
+  if (!(await ask({ title: '삭제', html: `<p><b>${esc(f.name)}</b></p><p>드라이브 휴지통으로 이동합니다. ${isPhoto ? `슬롯 ${f.slot}번은 빈칸으로 남습니다.` : '뒤 번호가 하나씩 당겨집니다.'}</p>`, buttons: [{ label: '취소', value: false }, { label: '삭제', value: true, cls: 'danger' }] }))) return;
+  busy(true);
   try { const r = await api('remove', { id: f.id }); toast(`삭제됨${r.renamed ? ` · ${r.renamed}개 번호 당김` : ''}`); await loadFiles(true); }
   catch (e) { toast('✗ 삭제 실패: ' + esc(e.message), 'bad'); }
   busy(false);
 }
-
 async function doRetake(ctx, file) {
   busy(true);
   try {
@@ -513,35 +1189,31 @@ async function doRetake(ctx, file) {
   } catch (e) { toast('✗ 다시 찍기 실패: ' + esc(e.message) + (e instanceof NetError ? ' (인터넷 연결 필요)' : ''), 'bad'); }
   busy(false);
 }
-
-function openMove(f, isDoc) {
+async function driveMove(f, isPhoto) {
   const m = f.meta || {};
-  let cur = { gubun: m.gubun || listTarget.gubun, jibun: m.jibun || listTarget.jibun, loc: m.loc || '', kind: m.kind || '' };
-  const dm = f.name.match(/^\S+ (\S+) (\S+) (주민등록등본|주민등록초본|임대차계약서)\d+\./);
+  let cur = { gubun: m.gubun || F.target.gubun, jibun: m.jibun || F.target.jibun, loc: m.loc || '', kind: m.kind || (isPhoto ? '외관' : '주민등록등본'), slot: f.slot || 0 };
+  const dm = f.name.match(DOC_RE);
   if (dm) cur = Object.assign(cur, { jibun: dm[1], loc: dm[2], kind: dm[3] });
-  if (!cur.kind) cur.kind = isDoc ? '주민등록등본' : '외관';
-  const kinds = ['주민등록등본', '주민등록초본', '임대차계약서', '외관', '내부'];
-  $('panel').innerHTML = `<h2>정보 수정</h2><p class="empty" style="padding-top:0">${esc(f.name)}</p>
-    <div class="row"><label class="fld"><span>건물</span><select id="mG"><option value="토건">토지건물</option><option value="구분">구분건물</option></select></label>
-    <label class="fld"><span>종류</span><select id="mK">${kinds.map(k => `<option>${k}</option>`).join('')}</select></label></div>
-    <div class="row" style="margin-top:10px"><label class="fld"><span>지번</span><input id="mJ"></label><label class="fld"><span>층 / 호</span><input id="mL"></label></div>
-    <div class="preview" id="mP"></div>
-    <button class="btn primary" id="mSave">변경 저장</button><button class="btn sm" data-close>취소</button>`;
-  $('mG').value = cur.gubun; $('mK').value = cur.kind; $('mJ').value = cur.jibun; $('mL').value = cur.loc;
-  const val = () => { const src = { gubun: $('mG').value, jibun: $('mJ').value, loc: $('mL').value }; return makeTarget($('mK').value, src); };
-  const pv = () => { try { $('mP').innerHTML = '새 이름: ' + nameHint(val()); } catch (e) { $('mP').innerHTML = `<span class="e">${esc(e.message)}</span>`; } };
-  ['mG', 'mK', 'mJ', 'mL'].forEach(id => $(id).addEventListener('input', pv)); pv();
-  $('mSave').onclick = async () => {
-    let t; try { t = val(); } catch (e) { return; }
-    closeModal(); busy(true);
-    try { const r = await api('move', { id: f.id, to: t }); toast(r.unchanged ? '기록을 수정했습니다' : '✓ 변경됨: ' + esc(r.name)); await loadFiles(true); }
-    catch (e) { toast('✗ 수정 실패: ' + esc(e.message), 'bad'); }
-    busy(false);
-  };
+  if (isPhoto && !cur.loc && F.target.gubun === '구분') cur.loc = F.target.loc;
+  const r = await infoForm(cur, { imgUrl: f.thumb, selfKey: F.data.key, selfSlot: f.slot });
+  if (!r) return;
+  busy(true);
+  try {
+    let res = await api('move', { id: f.id, to: r, force: r.review });
+    if (res.dup) {
+      busy(false);
+      if (!(await ask({ title: '슬롯 중복', html: `<p>${esc(res.name)}이(가) 이미 있습니다. (검토) 이름으로 저장할까요?</p>`, buttons: [{ label: '취소', value: false }, { label: '검토로 저장', value: true, cls: 'warn' }] }))) return;
+      busy(true);
+      res = await api('move', { id: f.id, to: r, force: true });
+    }
+    toast(res.unchanged ? '기록을 수정했습니다' : '✓ 변경됨: ' + esc(res.name));
+    await loadFiles(true);
+  } catch (e) { toast('✗ 수정 실패: ' + esc(e.message), 'bad'); }
+  busy(false);
 }
 
-/* ---------- 회전 · 자르기 ---------- */
-const E = { img: null, rot: 0, crop: null, f: null, drag: null, scale: 1 };
+/* ---------- 회전 · 자르기 (업로드된 파일) ---------- */
+const E = { img: null, rot: 0, crop: null, f: null, drag: null };
 async function openEditor(f, url) {
   try { E.img = await loadImg(url); } catch (e) { toast('✗ 이 파일은 편집할 수 없는 형식입니다', 'bad'); return; }
   E.f = f; E.rot = 0; E.crop = { x: 0, y: 0, w: 1, h: 1 };
@@ -556,8 +1228,7 @@ function drawRotated(ctx, W, H) {
 function drawEd() {
   const cv = $('cv'), st = $('stage');
   const [W, H] = edDims();
-  const maxW = st.clientWidth - 24, maxH = st.clientHeight - 24;
-  const s = Math.min(maxW / W, maxH / H, 1);
+  const s = Math.min((st.clientWidth - 24) / W, (st.clientHeight - 24) / H, 1);
   const dpr = window.devicePixelRatio || 1;
   const cw = Math.round(W * s), ch = Math.round(H * s);
   cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
@@ -593,8 +1264,7 @@ $('cv').addEventListener('pointermove', e => {
   const cl = v => Math.max(0, Math.min(1, v));
   let x1 = o.x, y1 = o.y, x2 = o.x + o.w, y2 = o.y + o.h;
   if (d.mode === 'move') {
-    const nx = Math.max(0, Math.min(1 - o.w, o.x + dx)), ny = Math.max(0, Math.min(1 - o.h, o.y + dy));
-    E.crop = { x: nx, y: ny, w: o.w, h: o.h };
+    E.crop = { x: Math.max(0, Math.min(1 - o.w, o.x + dx)), y: Math.max(0, Math.min(1 - o.h, o.y + dy)), w: o.w, h: o.h };
   } else {
     if (d.mode[1] === 'l') x1 = Math.min(cl(o.x + dx), x2 - MIN); else x2 = Math.max(cl(x2 + dx), x1 + MIN);
     if (d.mode[0] === 't') y1 = Math.min(cl(o.y + dy), y2 - MIN); else y2 = Math.max(cl(y2 + dy), y1 + MIN);
@@ -631,6 +1301,7 @@ function logout(msg) {
   S.code = ''; S.name = ''; LS.del('code'); LS.del('name');
   $('who').textContent = ''; $('btnSet').hidden = true;
   $('loginMsg').textContent = msg || '';
+  closeModal(true); vwClose();
   show('vLogin');
 }
 $('btnLogin').onclick = async () => {
@@ -642,32 +1313,38 @@ $('btnLogin').onclick = async () => {
   try {
     const r = await api('auth', {});
     S.name = r.name; LS.set('api', S.api); LS.set('code', S.code); LS.set('name', S.name);
+    busy(false);
     start();
-  } catch (e) { $('loginMsg').textContent = e instanceof NetError ? '서버에 연결하지 못했습니다. 주소와 인터넷을 확인하세요.' : e.message; }
-  busy(false);
+  } catch (e) { busy(false); $('loginMsg').textContent = e instanceof NetError ? '서버에 연결하지 못했습니다. 주소와 인터넷을 확인하세요.' : e.message; }
 };
 $('btnSet').onclick = () => {
-  $('panel').innerHTML = `<h2>설정</h2><p>근무자: <b>${esc(S.name)}</b></p><p style="font-size:12px;word-break:break-all;color:var(--sub)">서버: ${esc(S.api)}</p>
-    <button class="btn" id="sQ">전송 대기열 보기</button><button class="btn danger" id="sOut">접속 해제 (코드 다시 입력)</button>
-    <button class="btn sm" data-close>닫기</button><div class="ver">버전 ${VERSION}</div>`;
-  openModal();
+  openPanel(`<h2>설정</h2><p>근무자: <b>${esc(S.name)}</b></p><p style="font-size:12px;word-break:break-all;color:var(--sub)">서버: ${esc(S.api)}</p>
+    <button class="btn" id="sQ">업로드 대기목록</button><button class="btn" id="sBin">제거함</button><button class="btn danger" id="sOut">접속 해제 (코드 다시 입력)</button>
+    <button class="btn sm" data-close>닫기</button><div class="ver">버전 ${VERSION}</div>`);
   $('sQ').onclick = () => { closeModal(); openQueue(); };
+  $('sBin').onclick = () => openBin();
   $('sOut').onclick = async () => {
-    if ((await Q.all()).length && !confirm('아직 전송되지 않은 사진이 있습니다. 접속을 해제해도 사진은 폰에 남아 있고, 다시 접속하면 전송됩니다. 계속할까요?')) return;
-    closeModal(); logout();
+    const n = (await DB.all('q')).length;
+    closeModal();
+    if (n && !(await ask({ title: '접속 해제', html: `<p>업로드하지 않은 사진 ${n}장은 폰에 남아 있고, 다시 접속하면 업로드할 수 있습니다.</p>`, buttons: [{ label: '취소', value: false }, { label: '접속 해제', value: true, cls: 'danger' }] }))) return;
+    logout();
   };
 };
 function start() {
   $('who').textContent = S.name; $('btnSet').hidden = false;
-  show('vMain'); updateBar(); pump();
+  $('inJibun').value = ''; $('inLoc').value = '';
+  S.committed = ''; S.needShotConfirm = false;
+  renderPreview();
+  show('vMain'); updateBar();
+  startupNotice();
 }
 
 /* ---------- 시작 ---------- */
-(function init() {
+(async function init() {
   if (API_URL) $('apiWrap').style.display = 'none'; else $('inApi').value = S.api;
-  $('inJibun').value = LS.get('jibun', ''); $('inLoc').value = LS.get('loc', '');
   $('onlyLoc').checked = LS.get('onlyLoc', false);
-  setGubun(S.gubun);
+  setGubun(S.gubun, true);
+  try { await purgeBin(); } catch (e) {}
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
   if (S.code && S.api) start(); else show('vLogin');
