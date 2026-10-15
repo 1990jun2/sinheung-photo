@@ -242,7 +242,7 @@ h3 small{font-weight:400}
 'use strict';
 /* ===== 관리자 설정: Apps Script 웹앱 주소를 넣으면 근무자는 코드만 입력합니다 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzlgE2Ie1B0ubWHnsld8vQhjEAhP0Uun5Pa6_wMpszWGBpTreCho3wJNsOq8TTfncK9Q/exec';
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 const MAX_EDGE = 3200, JPEG_Q = 0.92;   // 고화질 저장 기준
 const DONG = '신흥동';
 const DOC_KINDS = ['주민등록등본', '주민등록초본', '외국인거소증명서', '임대차계약서'];
@@ -633,7 +633,7 @@ function slotPad({ t, blob, imgUrl, current, excludeId, fresh, title }) {
 function askInline(html, yes, no) {
   return new Promise(res => {
     const box = document.createElement('div');
-    box.className = 'modal on center'; box.style.zIndex = 59;
+    box.className = 'modal on center inl'; box.style.zIndex = 59;
     box.innerHTML = `<div class="panel dlg"><p>${html}</p><div class="acts"><button class="btn" data-v="0">${esc(no || '아니오')}</button><button class="btn primary" data-v="1">${esc(yes || '예')}</button></div></div>`;
     document.body.appendChild(box);
     box.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { box.remove(); res(b.dataset.v === '1'); });
@@ -1338,6 +1338,47 @@ function start() {
   show('vMain'); updateBar();
   startupNotice();
 }
+
+/* ---------- 휴대폰 뒤로가기 버튼 ----------
+ * 열린 창(확인창·키패드·전체화면·편집기)이 있으면 하나씩 닫고, 하위 화면이면 이전 화면으로,
+ * 첫 화면이면 '앱을 종료하시겠습니까?'를 묻는다. 방문 기록에 표시용 항목을 하나 두어 뒤로가기를 가로챈다. */
+const NAV = { exiting: false };
+function pushGuard() {
+  if (NAV.exiting) return;
+  if (!(history.state && history.state.sh1)) history.pushState({ sh1: 1 }, '');
+}
+document.addEventListener('pointerdown', pushGuard, true);   // 사용자가 화면을 만진 뒤에 넣어야 브라우저가 건너뛰지 않음
+document.addEventListener('keydown', pushGuard, true);
+window.addEventListener('popstate', async () => {
+  if (NAV.exiting) return;
+  const inline = document.querySelector('.modal.inl');
+  if (inline) { inline.querySelector('[data-v="0"]').click(); return pushGuard(); }
+  if ($('busy').classList.contains('on')) return pushGuard();
+  if ($('ed').classList.contains('on')) { $('ed').classList.remove('on'); return pushGuard(); }
+  if ($('vw').classList.contains('on')) { vwClose(); return pushGuard(); }
+  if (modalOpen()) {
+    if (NAV.exitOpen) return;                     // 종료 확인창이 떠 있을 때 한 번 더 누르면 그대로 종료
+    if ($('padCancel')) $('padCancel').click(); else closeModal();
+    return pushGuard();
+  }
+  if (curView === 'vImport') { $('impCancel').click(); return pushGuard(); }
+  if (curView === 'vQueue' || curView === 'vFiles') { document.querySelector('#' + curView + ' [data-back]').click(); return pushGuard(); }
+  // 첫 화면: 종료 확인 (이때는 표시용 항목이 없으므로 뒤로가기를 한 번 더 누르면 바로 종료)
+  let n = 0;
+  try { n = (await DB.all('q')).length; } catch (e) {}
+  NAV.exitOpen = true;
+  const r = await ask({ title: '앱 종료', html: '<p style="font-size:18px;font-weight:700;text-align:center;margin:12px 0">앱을 종료하시겠습니까?</p>' +
+    (n ? `<p class="note w">⚠ 업로드하지 않은 사진이 <b>${n}장</b> 있습니다. 사진은 폰에 남아 있고 다음에 앱을 열면 업로드할 수 있습니다.</p>` : '') +
+    '<p class="note">뒤로가기 버튼을 한 번 더 눌러도 종료됩니다.</p>',
+    buttons: [{ label: '취소', value: false }, { label: '종료', value: true, cls: 'primary' }] });
+  NAV.exitOpen = false;
+  if (r === true) {
+    NAV.exiting = true;
+    try { window.close(); } catch (e) {}
+    history.back();
+    setTimeout(() => { NAV.exiting = false; toast('뒤로가기 버튼을 한 번 더 누르면 종료됩니다'); }, 500);
+  } else pushGuard();
+});
 
 /* ---------- 시작 ---------- */
 (async function init() {
