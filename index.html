@@ -33,6 +33,11 @@ main{max-width:560px;margin:0 auto;padding:14px 16px calc(110px + env(safe-area-
 .fld input::placeholder{color:var(--faint);font-weight:400;opacity:1}
 .fld input:focus,.fld select:focus{outline:0;border-color:var(--navy2)}
 .fld input.bad{border-color:var(--err)}
+.fld input.free{border-color:#dd6b20;background:#fffaf0}
+.freebar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--sub)}
+.freebtn{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.freebtn.on{background:#dd6b20;border-color:#dd6b20;color:#fff}
+.tag.f{background:#dd6b20;color:#fff}
 .preview{margin:10px 0 4px;padding:10px 12px;border-radius:10px;background:#fff;border:1px dashed var(--line);font-size:14px;color:var(--sub);min-height:44px}
 .preview b{color:var(--ink)}.e{color:var(--err);font-weight:600}
 h3{font-size:14px;margin:18px 0 8px 2px;color:var(--sub);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -172,9 +177,10 @@ h3 small{font-weight:400}
   <section id="vMain" class="view">
     <div class="seg" id="seg"><button data-g="토건" class="on">토지건물</button><button data-g="구분">구분건물</button></div>
     <div class="two">
-      <label class="fld"><span>지번</span><input id="inJibun" placeholder="예) 4902" autocomplete="off" inputmode="numeric" enterkeyhint="next"></label>
+      <label class="fld"><span>지번</span><input id="inJibun" placeholder="예) 4902, 산12-3" autocomplete="off" enterkeyhint="next"></label>
       <label class="fld"><span id="lblLoc">층 / 호</span><input id="inLoc" placeholder="예) 2층" autocomplete="off" enterkeyhint="done"></label>
     </div>
+    <div class="freebar" id="freeBar"><span>규칙에 없는 표기(지층 1호, 2층 앞쪽 등)는</span><button type="button" class="freebtn" id="btnFree">자유입력</button></div>
     <div class="preview" id="preview"></div>
 
     <h3><i style="background:var(--doc)"></i>관련서류 <small>→ 03. 서류</small></h3>
@@ -242,7 +248,7 @@ h3 small{font-weight:400}
 'use strict';
 /* ===== 관리자 설정: Apps Script 웹앱 주소를 넣으면 근무자는 코드만 입력합니다 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyzlgE2Ie1B0ubWHnsld8vQhjEAhP0Uun5Pa6_wMpszWGBpTreCho3wJNsOq8TTfncK9Q/exec';
-const VERSION = '1.1.3';
+const VERSION = '1.2.0';
 const MAX_EDGE = 3200, JPEG_Q = 0.92;   // 고화질 저장 기준
 const DONG = '신흥동';
 const DOC_KINDS = ['주민등록등본', '주민등록초본', '외국인거소증명서', '임대차계약서'];
@@ -260,7 +266,7 @@ const LS = {
 };
 const S = {
   api: API_URL || LS.get('api', ''), code: LS.get('code', ''), name: LS.get('name', ''), gubun: LS.get('gubun', '토건'),
-  committed: '', needShotConfirm: false,
+  committed: '', needShotConfirm: false, free: false,
   peek: { docs: {}, photos: {} }, peekOk: false,
 };
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
@@ -294,39 +300,55 @@ function setDock(html) { const d = $('dock'); d.innerHTML = html; d.classList.to
 /* ---------- 입력 정리 (서버 Code.gs와 같은 규칙) ---------- */
 function normJibun(s) {
   const v = String(s || '').replace(/\s+/g, '').replace(/^신흥동?/, '').replace(/번지$/, '');
-  if (!/^\d{1,5}(-\d{1,4})?$/.test(v)) throw new Error('지번 형식 확인 (예: 4902, 4677-1)');
+  if (!/^산?\d{1,5}(-\d{1,4})?$/.test(v)) throw new Error('지번 형식 확인 (예: 4902, 4677-1, 산12-3)');
   return v;
 }
-function normLoc(s, gubun) {
-  const v = String(s || '').replace(/\s+/g, '').toUpperCase();
-  if (!v) return '';
+/** 층/호 정리 (서버 Code.gs와 같은 규칙). 토지건물: '[위치](무허가) 일부'. free=자유입력 */
+function normLoc(s, gubun, free) {
+  const raw = String(s || '').trim().replace(/\s+/g, ' ');
+  if (!raw) return '';
   const pad = n => (n.length < 2 ? '0' + n : n);
   let m;
   if (gubun === '구분') {
+    const v = raw.replace(/\s+/g, '').toUpperCase();
     if ((m = v.match(/^(?:B|비)(\d{1,2})호?$/))) return 'B' + pad(m[1]) + '호';
     if ((m = v.match(/^(\d{2,4})호?$/))) return m[1] + '호';
     throw new Error('호 형식 확인 (예: 101, 101호, B01호)');
   }
-  if ((m = v.match(/^(\d{1,2})(?:층|F)?$/))) return Number(m[1]) + '층';
-  if ((m = v.match(/^(?:B|지하)(\d)(?:층|F)?$/))) return '지하' + m[1] + '층';
-  if (/^(?:지층|지하|지하층|B)$/.test(v)) return '지층';
-  if (v === '반지하') return '반지하';
-  if (/^옥탑/.test(v)) return /무허가/.test(v) ? '옥탑(무허가)' : '옥탑';
-  if ((m = v.match(/^비(\d{1,2})호?$/))) return '비' + pad(m[1]) + '호';
-  if ((m = v.match(/^(\d{3,4})호$/))) return m[1] + '호';
-  throw new Error('층/호 형식 확인 (예: 1층, 지층, 옥탑, 비01호, 201호)');
+  try { return strictLoc(raw); } catch (e) { if (!free) throw e; }
+  if (/[\/\\:*?"<>|]/.test(raw)) throw new Error('사용할 수 없는 문자: / \\ : * ? " < > |');
+  if (raw.length > 20) throw new Error('층/호는 20자 이내로 입력하세요');
+  return raw;
 }
+function strictLoc(raw) {
+  let v = String(raw).replace(/\s+/g, '').toUpperCase(), mu = false, part = false;
+  v = v.replace(/\(무허가\)|무허가/g, () => { mu = true; return ''; });
+  v = v.replace(/일부/g, () => { part = true; return ''; });
+  const pad = n => (n.length < 2 ? '0' + n : n);
+  let m, core = '';
+  if ((m = v.match(/^(\d{1,2})(?:층|F)?$/)) && Number(m[1]) >= 1) core = Number(m[1]) + '층';
+  else if ((m = v.match(/^(?:B|지하)([1-9])(?:층|F)?$/))) core = '지하' + m[1] + '층';
+  else if (/^(?:지층|지하|지하층|B)$/.test(v)) core = '지층';
+  else if (v === '반지하') core = '반지하';
+  else if (v === '옥탑') core = '옥탑';
+  else if ((m = v.match(/^비(\d{1,2})호?$/)) && Number(m[1]) >= 1) core = '비' + pad(m[1]) + '호';
+  else if ((m = v.match(/^(\d{3,4})호$/))) core = m[1] + '호';
+  else throw new Error('층/호 형식 확인 (예: 2층, 지층, 옥탑, 102호, 2층 일부, 102호(무허가)) — 그 밖의 표기는 [자유입력]');
+  return core + (mu ? '(무허가)' : '') + (part ? ' 일부' : '');
+}
+const isStrictLoc = loc => { try { strictLoc(loc); return true; } catch (e) { return false; } };
 const photoKey = (gubun, jibun, loc) => (gubun === '구분' ? jibun + '_' + loc.replace(/호$/, '') : jibun);
 /** 저장 대상. 문제가 있으면 오류 */
 function makeTarget(kind, src) {
-  src = src || { gubun: S.gubun, jibun: $('inJibun').value, loc: $('inLoc').value };
+  src = src || { gubun: S.gubun, jibun: $('inJibun').value, loc: $('inLoc').value, free: S.free };
   const gubun = src.gubun === '구분' ? '구분' : '토건';
   const jibun = normJibun(src.jibun);
-  const loc = normLoc(src.loc, gubun);
+  const loc = normLoc(src.loc, gubun, !!src.free && gubun === '토건');
   const isDoc = isDocKind(kind);
   if (!loc && gubun === '구분') throw new Error('구분건물은 호를 입력하세요');
   if (!loc && isDoc) throw new Error('서류는 층 또는 호를 입력하세요');
-  return { gubun, jibun, loc, kind, isDoc, key: photoKey(gubun, jibun, loc) };
+  const free = gubun === '토건' && !!loc && !isStrictLoc(loc);   // 실제로 규칙 밖 표기인 경우에만 자유입력으로 표시
+  return { gubun, jibun, loc, kind, isDoc, free, key: photoKey(gubun, jibun, loc) };
 }
 /** 세대(지번+층/호) 식별자와 표시 */
 const segKey = t => `${t.gubun}|${t.jibun}|${t.loc}`;
@@ -334,9 +356,9 @@ const segLabel = t => `${DONG} ${t.jibun}${t.loc ? ' ' + t.loc : ''}${t.gubun ==
 function readSeg() {
   const gubun = S.gubun;
   const jibun = normJibun($('inJibun').value);
-  const loc = normLoc($('inLoc').value, gubun);
+  const loc = normLoc($('inLoc').value, gubun, S.free && gubun === '토건');
   if (gubun === '구분' && !loc) throw new Error('구분건물은 호를 입력하세요');
-  return { gubun, jibun, loc };
+  return { gubun, jibun, loc, free: gubun === '토건' && !!loc && !isStrictLoc(loc) };
 }
 const docGk = it => `${it.jibun}|${it.loc}|${it.kind}`;
 const docName = (jibun, loc, kind, n) => `${DONG} ${jibun} ${loc} ${kind}${n}.jpg`;
@@ -410,7 +432,7 @@ const DB = {
 const Q = { dirty: false };
 async function addToQueue(t, blob, extra) {
   const now = Date.now();
-  const it = Object.assign({ id: uid(), gubun: t.gubun, jibun: t.jibun, loc: t.loc, kind: t.kind, blob, at: now, order: now, status: 'wait' }, extra || {});
+  const it = Object.assign({ id: uid(), gubun: t.gubun, jibun: t.jibun, loc: t.loc, free: !!t.free, kind: t.kind, blob, at: now, order: now, status: 'wait' }, extra || {});
   await DB.put('q', it);
   updateBar();
   return it;
@@ -469,6 +491,7 @@ async function confirmSeg(seg, why) {
   const p = await pendingOther(seg);
   const head = why === 'shot' ? '촬영 전 확인' : '지번·층(호) 확인';
   const html = `<div class="target">${esc(segLabel(seg))}</div><p style="text-align:center">이 지번과 층·호가 맞습니까?</p>` +
+    (seg.free ? `<p class="note w">⚠ <b>자유입력</b>: "${esc(seg.loc)}" — 띄어쓰기·글자를 다시 확인하세요. 같은 세대는 항상 같은 표기로 입력해야 합니다.</p>` : '') +
     (why === 'change' && p.other ? `<p class="note w">⚠ 업로드하지 않은 다른 세대 사진이 <b>${p.other}장</b> 대기목록에 있습니다.</p>` : '');
   return ask({ title: head, html, buttons: [{ label: '수정', value: false }, { label: '맞음', value: true, cls: 'primary' }] });
 }
@@ -487,23 +510,40 @@ function setGubun(g, silent) {
   $('inLoc').placeholder = g === '구분' ? '예) 101' : '예) 2층';
   $('inHint').textContent = g === '구분' ? '호별' : '층별 1장';
   $('onlyLocTxt').textContent = g === '구분' ? '이 호 서류만 보기' : '이 층/호 서류만 보기';
+  $('freeBar').style.display = g === '구분' ? 'none' : '';
+  if (g === '구분') setFree(false, true);
   renderPreview();
   if (!silent) scheduleSegCheck();
 }
 $('seg').onclick = e => { const b = e.target.closest('button'); if (b) setGubun(b.dataset.g); };
 
+/** 자유입력 켜기/끄기 (토지건물만). 지번을 바꾸면 자동으로 꺼짐 */
+function setFree(on, silent) {
+  const was = S.free;
+  S.free = !!on && S.gubun === '토건';
+  $('btnFree').classList.toggle('on', S.free);
+  $('btnFree').textContent = S.free ? '자유입력 켜짐' : '자유입력';
+  $('inLoc').classList.toggle('free', S.free);
+  $('inLoc').placeholder = S.gubun === '구분' ? '예) 101' : S.free ? '예) 지층 1호, 2층 앞쪽' : '예) 2층';
+  renderPreview();
+  if (!silent && was !== S.free) { if (S.free) $('inLoc').focus(); else toast('자유입력이 꺼졌습니다'); }
+}
+$('btnFree').onclick = () => setFree(!S.free);
+$('inJibun').addEventListener('input', () => { if (S.free) { setFree(false, true); toast('지번이 바뀌어 자유입력이 꺼졌습니다'); } });
 function renderPreview() {
   const p = $('preview');
   let jOk = true, lOk = true, jv = '', lv = '';
   try { jv = normJibun($('inJibun').value); } catch (e) { jOk = !$('inJibun').value.trim() ? null : false; }
-  try { lv = normLoc($('inLoc').value, S.gubun); } catch (e) { lOk = false; }
+  let lErr = '';
+  try { lv = normLoc($('inLoc').value, S.gubun, S.free); } catch (e) { lOk = false; lErr = e.message; }
   $('inJibun').classList.toggle('bad', jOk === false);
   $('inLoc').classList.toggle('bad', lOk === false);
   if (jOk === null) { p.innerHTML = '지번과 층·호를 입력하세요'; return; }
   if (!jOk) { p.innerHTML = '<span class="e">지번 형식 확인 (예: 4902, 4677-1)</span>'; return; }
-  if (!lOk) { p.innerHTML = `<span class="e">${esc(S.gubun === '구분' ? '호 형식 확인 (예: 101, B01호)' : '층/호 형식 확인 (예: 1층, 지층, 옥탑, 비01호)')}</span>`; return; }
+  if (!lOk) { p.innerHTML = `<span class="e">${esc(lErr)}</span>`; return; }
   const key = S.gubun === '구분' ? (lv ? photoKey('구분', jv, lv) : '') : jv;
-  p.innerHTML = `<b>${DONG} ${esc(jv)}${lv ? ' ' + esc(lv) : ''}</b><br>` +
+  const freeTag = S.gubun === '토건' && lv && !isStrictLoc(lv) ? '<span class="tag f">자유입력</span>' : '';
+  p.innerHTML = `<b>${DONG} ${esc(jv)}${lv ? ' ' + esc(lv) : ''}</b>${freeTag}<br>` +
     (lv ? `서류: ${DONG} ${esc(jv)} ${esc(lv)} 등본<b>N</b>.jpg<br>` : '서류: <span class="e">층/호를 넣어야 촬영 가능</span><br>') +
     (key ? `사진: ${esc(key)}-사-<b>슬롯</b>.jpg` : '사진: <span class="e">호를 넣어야 촬영 가능</span>');
 }
@@ -688,7 +728,7 @@ function bindPress(el, onTap, onLong) {
 /* ---------- 대기목록 ---------- */
 async function fetchPeek(items) {
   const docs = {}, keys = {};
-  items.forEach(it => { if (isDocKind(it.kind)) docs[docGk(it)] = { gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind }; else keys[photoKey(it.gubun, it.jibun, it.loc)] = 1; });
+  items.forEach(it => { if (isDocKind(it.kind)) docs[docGk(it)] = { gubun: it.gubun, jibun: it.jibun, loc: it.loc, free: !!it.free, kind: it.kind }; else keys[photoKey(it.gubun, it.jibun, it.loc)] = 1; });
   try {
     const r = await api('peek', { docs: Object.values(docs), keys: Object.keys(keys) }, 10000);
     Object.assign(S.peek.docs, r.docs); Object.assign(S.peek.photos, r.photos); S.peekOk = true;
@@ -809,10 +849,10 @@ function openQueueViewer(i) {
 async function editQueueItem(id) {
   const it = await DB.get('q', id);
   if (!it) return false;
-  const r = await infoForm({ gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind, slot: it.slot }, { excludeId: it.id, imgUrl: thumbUrl(it) });
+  const r = await infoForm({ gubun: it.gubun, jibun: it.jibun, loc: it.loc, free: it.free, kind: it.kind, slot: it.slot }, { excludeId: it.id, imgUrl: thumbUrl(it) });
   if (!r) return false;
   const docChanged = isDocKind(r.kind) && (docGk(r) !== docGk(it) || r.gubun !== it.gubun);
-  Object.assign(it, { gubun: r.gubun, jibun: r.jibun, loc: r.loc, kind: r.kind, slot: isDocKind(r.kind) ? undefined : r.slot, review: isDocKind(r.kind) ? false : r.review, status: 'wait', error: '' });
+  Object.assign(it, { gubun: r.gubun, jibun: r.jibun, loc: r.loc, free: !!r.free, kind: r.kind, slot: isDocKind(r.kind) ? undefined : r.slot, review: isDocKind(r.kind) ? false : r.review, status: 'wait', error: '' });
   if (docChanged) it.order = Date.now();
   await DB.put('q', it);
   toast('정보를 수정했습니다');
@@ -836,14 +876,19 @@ function infoForm(cur, opt) {
     openPanel(`<h2>정보 수정</h2>${opt.imgUrl ? `<img class="padimg" src="${opt.imgUrl}" alt="" style="height:22vh">` : ''}
       <div class="two" style="margin-top:10px"><label class="fld"><span>건물</span><select id="mG"><option value="토건">토지건물</option><option value="구분">구분건물</option></select></label>
       <label class="fld"><span>종류</span><select id="mK" style="font-size:16px">${kinds.map(k => `<option>${k}</option>`).join('')}</select></label></div>
-      <div class="two" style="margin-top:10px"><label class="fld"><span>지번</span><input id="mJ" inputmode="numeric"></label><label class="fld"><span>층 / 호</span><input id="mL"></label></div>
+      <div class="two" style="margin-top:10px"><label class="fld"><span>지번</span><input id="mJ" autocomplete="off"></label><label class="fld"><span>층 / 호</span><input id="mL" autocomplete="off"></label></div>
+      <div class="freebar" id="mFreeBar"><span>규칙에 없는 표기는</span><button type="button" class="freebtn" id="mFree">자유입력</button></div>
       <div id="mSlotWrap"><div class="glabel" style="margin-top:12px">슬롯 번호</div><div class="pad" id="mPad"></div></div>
       <div class="preview" id="mP"></div>
       <div class="acts"><button class="btn" data-close>취소</button><button class="btn primary" id="mSave">변경 저장</button></div>`);
     modalResolve = resolve;
     $('mG').value = cur.gubun || '토건'; $('mK').value = cur.kind; $('mJ').value = cur.jibun || ''; $('mL').value = cur.loc || '';
     let slot = cur.slot || 0, used = { q: [], drive: null }, usedKey = '';
-    const val = () => makeTarget($('mK').value, { gubun: $('mG').value, jibun: $('mJ').value, loc: $('mL').value });
+    let mfree = !!cur.free || (!!cur.loc && (cur.gubun || '토건') === '토건' && !isStrictLoc(cur.loc));
+    const freeUi = () => { const t = $('mG').value === '토건'; if (!t) mfree = false; $('mFreeBar').style.display = t ? '' : 'none'; $('mFree').classList.toggle('on', mfree); $('mFree').textContent = mfree ? '자유입력 켜짐' : '자유입력'; $('mL').classList.toggle('free', mfree); };
+    $('mFree').onclick = () => { mfree = !mfree; freeUi(); pv(); };
+    $('mJ').addEventListener('input', () => { if (mfree && $('mJ').value !== (cur.jibun || '')) { mfree = false; freeUi(); } });
+    const val = () => makeTarget($('mK').value, { gubun: $('mG').value, jibun: $('mJ').value, loc: $('mL').value, free: mfree });
     const isUsed = n => used.q.includes(n) || (used.drive || []).includes(n);
     const refreshUsed = async t => {
       if (!t || t.isDoc || t.key === usedKey) return;
@@ -860,10 +905,11 @@ function infoForm(cur, opt) {
       $('mPad').innerHTML = Array.from({ length: SLOTS }, (_, i) => i + 1).map(n => `<button data-n="${n}" class="${isUsed(n) ? 'used' : ''} ${n === slot ? 'sel' : ''}">${n}</button>`).join('');
       $('mPad').querySelectorAll('button').forEach(b => b.onclick = () => { slot = +b.dataset.n; pv(); });
       if (!t) return;
+      const ft = t.free ? ' <span class="tag f">자유입력</span>' : '';
       if (photo) { refreshUsed(t); $('mP').innerHTML = slot ? '새 이름: <b>' + esc(photoName(t.key, slot, isUsed(slot))) + '</b>' + (isUsed(slot) ? '<br><span class="e">⚠ 슬롯 중복 — (검토)로 저장됩니다</span>' : '') : '<span class="e">슬롯 번호를 고르세요</span>'; }
-      else $('mP').innerHTML = '새 이름: <b>' + esc(`${DONG} ${t.jibun} ${t.loc} ${t.kind}`) + 'N.jpg</b> <small>(그 묶음의 마지막 번호 다음)</small>';
+      else $('mP').innerHTML = '새 이름: <b>' + esc(`${DONG} ${t.jibun} ${t.loc} ${t.kind}`) + 'N.jpg</b>' + ft + ' <small>(그 묶음의 마지막 번호 다음)</small>';
     };
-    ['mG', 'mK', 'mJ', 'mL'].forEach(id => $(id).addEventListener('input', pv)); pv();
+    ['mG', 'mK', 'mJ', 'mL'].forEach(id => $(id).addEventListener('input', () => { freeUi(); pv(); })); freeUi(); pv();
     $('mSave').onclick = async () => {
       let t; try { t = val(); } catch (e) { return; }
       let review = false;
@@ -875,7 +921,7 @@ function infoForm(cur, opt) {
         }
       }
       modalResolve = null; closeModal();
-      resolve({ gubun: t.gubun, jibun: t.jibun, loc: t.loc, kind: t.kind, slot: t.isDoc ? 0 : slot, review });
+      resolve({ gubun: t.gubun, jibun: t.jibun, loc: t.loc, free: t.free, kind: t.kind, slot: t.isDoc ? 0 : slot, review });
     };
   });
 }
@@ -891,7 +937,7 @@ async function uploadAll() {
   const saved = [];
   let fail = 0, held = 0, stop = false, n = 0;
   const total = flat.length;
-  const send = (it, extra) => api('upload', Object.assign({ gubun: it.gubun, jibun: it.jibun, loc: it.loc, kind: it.kind, cid: it.id }, extra), 120000);
+  const send = (it, extra) => api('upload', Object.assign({ gubun: it.gubun, jibun: it.jibun, loc: it.loc, free: !!it.free, kind: it.kind, cid: it.id }, extra), 120000);
   try {
     for (const s of segs) {
       if (stop) break;
@@ -1088,7 +1134,7 @@ async function loadFiles(quiet) {
   $('filesTitle').textContent = segLabel(seg);
   if (!quiet) $('fileBody').innerHTML = '<p class="empty">불러오는 중…</p>';
   try {
-    F.data = await api('list', { gubun: seg.gubun, jibun: seg.jibun, loc: seg.loc, onlyLoc: $('onlyLoc').checked });
+    F.data = await api('list', { gubun: seg.gubun, jibun: seg.jibun, loc: seg.loc, free: seg.free, onlyLoc: $('onlyLoc').checked });
     F.dirty = false;
     renderFiles();
   } catch (e) {
@@ -1096,7 +1142,7 @@ async function loadFiles(quiet) {
     $('fileBody').innerHTML = `<p class="err">불러오기 실패: ${esc(e.message)}</p>`;
   }
 }
-const DOC_RE = new RegExp(`^${DONG} (\\S+) (\\S+) (${DOC_KINDS.join('|')})(\\d+)\\.`);
+const DOC_RE = new RegExp(`^${DONG} (\\S+) (.+) (${DOC_KINDS.join('|')})(\\d+)\\.`);
 function renderFiles() {
   const d = F.data;
   const groups = {}, other = [];
@@ -1334,36 +1380,42 @@ function start() {
   $('who').textContent = S.name; $('btnSet').hidden = false;
   $('inJibun').value = ''; $('inLoc').value = '';
   S.committed = ''; S.needShotConfirm = false;
-  renderPreview();
+  setFree(false, true);
   show('vMain'); updateBar();
   startupNotice();
 }
 
 /* ---------- 휴대폰 뒤로가기 버튼 ----------
  * 열린 창(확인창·키패드·전체화면·편집기)이 있으면 하나씩 닫고, 하위 화면이면 이전 화면으로,
- * 첫 화면이면 '앱을 종료하시겠습니까?'를 묻는다. 방문 기록에 표시용 항목을 하나 두어 뒤로가기를 가로챈다. */
-const NAV = { exiting: false };
-function pushGuard() {
-  if (NAV.exiting) return;
-  if (!(history.state && history.state.sh1)) history.pushState({ sh1: 1 }, '');
+ * 첫 화면이면 '앱을 종료하시겠습니까?'를 묻는다.
+ * 방법: 사용자가 화면을 탭할 때마다 방문 기록에 '보호 단계'를 여러 개(최대 6) 미리 쌓아 두고,
+ *       뒤로가기 한 번에 한 단계씩 소모한다. 폰 브라우저는 사용자 탭 없이 넣은 단계를 무시하므로
+ *       뒤로가기 처리 중에는 새로 쌓지 않는다(이전 버전의 문제 원인). */
+const NAV = { exiting: false, exitOpen: false, ignore: 0 };
+const NAV_MAX = 6;
+const navDepth = () => (history.state && history.state.sh1) || 0;
+function armGuard(e) {
+  if (NAV.exiting || NAV.exitOpen) return;
+  if (e && e.isTrusted === false) return;                                          // 프로그램이 누른 버튼은 제외
+  if (navigator.userActivation && !navigator.userActivation.isActive) return;     // 사용자 동작 직후에만
+  let d = navDepth();
+  while (d < NAV_MAX) { d++; history.pushState({ sh1: d }, ''); }
 }
-// 휴대폰 브라우저는 손가락을 '뗄 때' 사용자 동작으로 인정한다. 그 전에 넣으면 뒤로가기 때 무시되므로 떼는 시점·클릭 시점에 넣는다
-['click', 'pointerup', 'touchend', 'keydown'].forEach(t => document.addEventListener(t, pushGuard, true));
+['click', 'pointerup', 'touchend', 'keydown'].forEach(t => document.addEventListener(t, armGuard, true));
 window.addEventListener('popstate', async () => {
-  if (NAV.exiting) return;
+  if (NAV.ignore > 0) { NAV.ignore--; return; }
+  if (NAV.exiting || NAV.exitOpen) return;
   const inline = document.querySelector('.modal.inl');
-  if (inline) { inline.querySelector('[data-v="0"]').click(); return pushGuard(); }
-  if ($('busy').classList.contains('on')) return pushGuard();
-  if ($('ed').classList.contains('on')) { $('ed').classList.remove('on'); return pushGuard(); }
-  if ($('vw').classList.contains('on')) { vwClose(); return pushGuard(); }
-  if (modalOpen()) {
-    if (NAV.exitOpen) return;                     // 종료 확인창이 떠 있을 때 한 번 더 누르면 그대로 종료
-    if ($('padCancel')) $('padCancel').click(); else closeModal();
-    return pushGuard();
-  }
-  if (curView === 'vImport') { $('impCancel').click(); return pushGuard(); }
-  if (curView === 'vQueue' || curView === 'vFiles') { document.querySelector('#' + curView + ' [data-back]').click(); return pushGuard(); }
-  // 첫 화면: 종료 확인 (이때는 표시용 항목이 없으므로 뒤로가기를 한 번 더 누르면 바로 종료)
+  if (inline) { inline.querySelector('[data-v="0"]').click(); return; }
+  if ($('busy').classList.contains('on')) return;
+  if ($('ed').classList.contains('on')) { $('ed').classList.remove('on'); return; }
+  if ($('vw').classList.contains('on')) { vwClose(); return; }
+  if (modalOpen()) { if ($('padCancel')) $('padCancel').click(); else closeModal(); return; }
+  if (curView === 'vImport') { $('impCancel').click(); return; }
+  if (curView === 'vQueue' || curView === 'vFiles') { document.querySelector('#' + curView + ' [data-back]').click(); return; }
+  // 첫 화면: 보호 단계를 모두 걷어낸 뒤 종료 확인 → 이 상태에서 뒤로가기를 한 번 더 누르면 바로 종료
+  const d = navDepth();
+  if (d > 0) { NAV.ignore++; history.go(-d); }
   let n = 0;
   try { n = (await DB.all('q')).length; } catch (e) {}
   NAV.exitOpen = true;
@@ -1373,11 +1425,9 @@ window.addEventListener('popstate', async () => {
     buttons: [{ label: '취소', value: false }, { label: '종료', value: true, cls: 'primary' }] });
   NAV.exitOpen = false;
   if (r === true) {
-    NAV.exiting = true;
     try { window.close(); } catch (e) {}
-    history.back();
-    setTimeout(() => { NAV.exiting = false; toast('뒤로가기 버튼을 한 번 더 누르면 종료됩니다'); }, 500);
-  } else pushGuard();
+    setTimeout(() => toast('뒤로가기 버튼을 한 번 더 누르면 종료됩니다'), 300);
+  } else armGuard();
 });
 
 /* ---------- 시작 ---------- */
